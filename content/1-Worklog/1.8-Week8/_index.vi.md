@@ -8,33 +8,36 @@ pre: " <b> 1.8. </b> "
 
 
 
-### Mục tiêu tuần 8:
+### Mục tiêu của Tuần 8:
 
-* Build và export website Hugo hoàn chỉnh.
-* Học cách chuẩn bị output từ Hugo để deploy.
-* Triển khai website Hugo tĩnh lên S3.
-* Kết nối S3 → CloudFront để chạy website production.
-* Kiểm tra lại website về tốc độ và khả năng truy cập.
+* Deploy frontend của dự án thật bằng AWS Amplify Hosting.
+* Hiểu quy trình Amplify: kết nối Git → build → deploy tự động.
+* Cấu hình các biến môi trường (API URL, Region...).
+* Kiểm tra hoạt động frontend → API Gateway → Lambda → DynamoDB.
+* Chuẩn bị cho việc tích hợp xác thực (Cognito) ở các tuần sau.
 
-### Các công việc cần triển khai trong tuần này:
+---
+
+### Công việc thực hiện trong tuần:
 
 | Thứ | Công việc | Ngày bắt đầu | Ngày hoàn thành | Tài liệu tham khảo |
 | --- | --------- | ------------ | ---------------- | ------------------- |
-| 2 | - Rà soát cấu trúc Hugo: layouts, themes, content <br> - Dọn dẹp nội dung, đảm bảo đầy đủ trang để deploy | 27/10/2025 | 27/10/2025 | Hugo Docs |
-| 3 | - Chạy lệnh `hugo` để build website <br> - Kiểm tra folder `/public` (HTML, CSS, JS) | 28/10/2025 | 28/10/2025 | Hugo Docs |
-| 4 | - Upload folder `/public` lên S3 bucket <br> - Bật static website hosting (nếu chưa bật) <br> - Truy cập thử qua endpoint S3 | 29/10/2025 | 29/10/2025 | AWS S3 Docs |
-| 5 | - Cập nhật CloudFront distribution trỏ đến S3 <br> - Deploy thay đổi và test website qua domain CloudFront | 30/10/2025 | 30/10/2025 | AWS CloudFront Docs |
-| 6 | - Kiểm tra website: <br>&emsp; + Tốc độ tải trang <br>&emsp; + Trang lỗi <br>&emsp; + Tất cả worklogs hiển thị đúng <br> - Thực hiện cache invalidation | 31/10/2025 | 31/10/2025 | AWS CloudFront Docs |
+| 2 | - Rà soát mã nguồn frontend và xác nhận chạy được local <br> - Build ở chế độ production để kiểm tra lỗi | 27/10/2025 | 27/10/2025 | Project Source |
+| 3 | - Tìm hiểu workflow Amplify Hosting: <br>&emsp; + Build tự động <br>&emsp; + Deploy tự động <br>&emsp; + Preview builds theo branch | 28/10/2025 | 28/10/2025 | 
+| 4 | - Kết nối GitHub repo với Amplify (khuyến nghị) <br> HOẶC <br> - Upload bản build thủ công (cho static site) <br> - Amplify tự tạo amplify.yml | 29/10/2025 | 29/10/2025 | 
+| 5 | - Cấu hình môi trường dự án: <br>&emsp; + API Gateway URL <br>&emsp; + AWS Region <br>&emsp; + Token hoặc các biến cần thiết <br> - Trigger build & deploy | 30/10/2025 | 30/10/2025 |
+| 6 | - Test toàn hệ thống: <br>&emsp; + Frontend → API Gateway → Lambda → DynamoDB <br>&emsp; + Kiểm tra CORS <br>&emsp; + Kiểm tra HTTPS & cache static files <br> - Ghi lại lỗi và fix nếu có | 31/10/2025 | 31/10/2025 | AWS Docs |
 
+---
 
+### Kết quả đạt được trong Tuần 8:
 
-### Kết quả đạt được tuần 8:
+* Deploy thành công frontend dự án lên AWS Amplify Hosting.
+* Hiểu quy trình build và deploy tự động thông qua GitHub.
+* Cấu hình đầy đủ environment variables cho ứng dụng.
+* Kiểm tra thành công luồng end-to-end: **Frontend → API → Lambda → DynamoDB**.
+* Chuẩn bị nền tảng để tuần 9 tích hợp xác thực bằng Cognito.
 
-* Build thành công website Hugo bằng thư mục `/public`.
-* Kiểm tra và xác nhận toàn bộ trang được build đầy đủ.
-* Upload website lên S3 và chạy được qua static hosting.
-* Kết nối S3 và CloudFront để website chạy nhanh và ổn định trên toàn cầu.
-* Test website qua CloudFront và đảm bảo mọi trang đều hiển thị đúng.
-* Thực hiện cache invalidation để cập nhật nội dung tức thì.
+---
 
 

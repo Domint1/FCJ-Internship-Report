@@ -16,14 +16,14 @@ pre: " <b> 1.11. </b> "
 * Tạo WebACL đơn giản và gắn vào CloudFront hoặc API Gateway.
 * Bật các Rule Group có sẵn của AWS để bảo vệ nhanh.
 
-### Các công việc cần triển khai trong tuần này:
 | Thứ | Công việc | Ngày bắt đầu | Ngày hoàn thành | Tài liệu tham khảo |
 | --- | --------- | ------------ | ---------------- | ------------------- |
-| 2 | - Tìm hiểu các khái niệm bảo mật web cơ bản: <br>&emsp; + Tấn công WAF có thể chặn <br>&emsp; + Layer 7 vs Layer 4 <br>&emsp; + OWASP Top 10 (phiên bản đơn giản) | 10/18/2025 | 10/18/2025 | AWS Security Docs |
-| 3 | - Học thành phần AWS WAF: WebACL, Rules, Rule Groups <br> - Hiểu Allow / Block / Count | 10/19/2025 | 10/19/2025 | AWS WAF Docs |
-| 4 | - Tạo WebACL trong console <br> - Gắn WebACL vào CloudFront hoặc API Gateway <br> - Bật AWS Managed Rules (CommonRuleSet) | 10/20/2025 | 10/20/2025 | AWS WAF Managed Rules |
-| 5 | - Tạo Rules đơn giản: <br>&emsp; + Chặn IP xấu <br>&emsp; + Chặn đường dẫn nguy hiểm (/wp-admin, /xmlrpc.php) <br>&emsp; + Rule theo rate (đếm số request) | 10/21/2025 | 10/21/2025 | AWS WAF Docs |
-| 6 | - Test WAF: gửi request hợp lệ và request chứa ký tự SQL <br> - Xem log WAF và Dashboard để kiểm tra rule hoạt động | 10/22/2025 | 10/22/2025 | AWS WAF Logging |
+| 2 | - Tìm hiểu các khái niệm bảo mật web cơ bản: <br>&emsp; + Tấn công WAF có thể chặn <br>&emsp; + Layer 7 vs Layer 4 <br>&emsp; + OWASP Top 10 (phiên bản đơn giản) | 17/11/2025 | 17/11/2025 | AWS Security Docs |
+| 3 | - Học thành phần AWS WAF: WebACL, Rules, Rule Groups <br> - Hiểu Allow / Block / Count | 18/11/2025 | 18/11/2025 | AWS WAF Docs |
+| 4 | - Tạo WebACL trong console <br> - Gắn WebACL vào CloudFront hoặc API Gateway <br> - Bật AWS Managed Rules (CommonRuleSet) | 19/11/2025 | 19/11/2025 | AWS WAF Managed Rules |
+| 5 | - Tạo Rules đơn giản: <br>&emsp; + Chặn IP xấu <br>&emsp; + Chặn đường dẫn nguy hiểm (/wp-admin, /xmlrpc.php) <br>&emsp; + Rule theo rate (đếm số request) | 20/11/2025 | 20/11/2025 | AWS WAF Docs |
+| 6 | - Test WAF: gửi request hợp lệ và request chứa ký tự SQL <br> - Xem log WAF và Dashboard để kiểm tra rule hoạt động | 21/11/2025 | 21/11/2025 | AWS WAF Logging |
+
 
 
 ### Kết quả đạt được tuần 11:

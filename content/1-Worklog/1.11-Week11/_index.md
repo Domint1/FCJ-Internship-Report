@@ -21,11 +21,12 @@ pre: " <b> 1.11. </b> "
 
 | Day | Task | Start Date | Completion Date | Reference Material |
 | --- | ---- | ---------- | ---------------- | ------------------ |
-| 2 | - Learn basic web security concepts: <br>&emsp; + What attacks WAF can block <br>&emsp; + Layer 7 vs Layer 4 protection <br>&emsp; + OWASP Top 10 (simplified) | 10/18/2025 | 10/18/2025 | AWS Security Docs |
-| 3 | - Learn AWS WAF components: <br>&emsp; + WebACL <br>&emsp; + Rules & Rule Groups <br>&emsp; + Action: Allow / Block / Count | 10/19/2025 | 10/19/2025 | AWS WAF Docs |
-| 4 | - Create a WAF WebACL in console <br> - Attach the WebACL to CloudFront distribution (or API Gateway) <br> - Enable AWS Managed Rules (CommonRuleSet) | 10/20/2025 | 10/20/2025 | AWS WAF Managed Rules |
-| 5 | - Add simple custom rules: <br>&emsp; + Block IPs <br>&emsp; + Block known malicious paths (/wp-admin, /xmlrpc.php) <br>&emsp; + Rate-based rule (beginner level) | 10/21/2025 | 10/21/2025 | AWS WAF Docs |
-| 6 | - Test WAF behavior by sending sample requests: <br>&emsp; + Normal traffic (should pass) <br>&emsp; + SQL-like inputs (should be blocked by managed rules) <br> - Review logs in CloudWatch or WAF Dashboard | 10/22/2025 | 10/22/2025 | AWS WAF Logging |
+| 2 | - Learn basic web security concepts: <br>&emsp; + What attacks WAF can block <br>&emsp; + Layer 7 vs Layer 4 protection <br>&emsp; + OWASP Top 10 (simplified) | 17/11/2025 | 17/11/2025 | AWS Security Docs |
+| 3 | - Learn AWS WAF components: <br>&emsp; + WebACL <br>&emsp; + Rules & Rule Groups <br>&emsp; + Action: Allow / Block / Count | 18/11/2025 | 18/11/2025 | AWS WAF Docs |
+| 4 | - Create a WAF WebACL in console <br> - Attach the WebACL to CloudFront distribution (or API Gateway) <br> - Enable AWS Managed Rules (CommonRuleSet) | 19/11/2025 | 19/11/2025 | AWS WAF Managed Rules |
+| 5 | - Add simple custom rules: <br>&emsp; + Block IPs <br>&emsp; + Block known malicious paths (/wp-admin, /xmlrpc.php) <br>&emsp; + Rate-based rule (beginner level) | 20/11/2025 | 20/11/2025 | AWS WAF Docs |
+| 6 | - Test WAF behavior by sending sample requests: <br>&emsp; + Normal traffic (should pass) <br>&emsp; + SQL-like inputs (should be blocked by managed rules) <br> - Review logs in CloudWatch or WAF Dashboard | 21/11/2025 | 21/11/2025 | AWS WAF Logging |
+
 
 ---
 

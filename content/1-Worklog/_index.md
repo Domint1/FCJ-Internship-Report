@@ -24,14 +24,14 @@ Typically, and as a standard, a worklog is carried out over about 3 months (thro
 
 **Week 6:** [Building HTTP API integrations (API Gateway → Lambda → DynamoDB)](1.6-week6/)
 
-**Week 7:** [Doing task G...](1.7-week7/)
+**Week 7:** [Learn AWS Amplify as frontend hosting](1.7-week7/)
 
-**Week 8:** [Doing task H...](1.8-week8/)
+**Week 8:** [Deploy your actual project frontend using Amplify](1.8-week8/)
 
-**Week 9:** [Doing task I...](1.9-week9/)
+**Week 9:** [Learning IAM vs Cognito, testing Cognito Hosted UI for login](1.9-week9/)
 
-**Week 10:** [Doing task L...](1.10-week10/)
+**Week 10:** [Learning CloudWatch Logs, Metrics, Alarms](1.10-week10/)
 
-**Week 11:** [Doing task M...](1.11-week11/)
+**Week 11:** [Learning AWS WAF, creating WebACL, enabling Managed Rules, and testing protections](1.11-week11/)
 
-**Week 12:** [Doing task N...](1.12-week12/)
+**Week 12:** [Final Review & Demo Preparation](1.12-week12/)

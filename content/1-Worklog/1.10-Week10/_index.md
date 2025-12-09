@@ -22,10 +22,10 @@ pre: " <b> 1.10. </b> "
 | Day | Task | Start Date | Completion Date | Reference Material |
 | --- | ---- | ---------- | ---------------- | ------------------ |
 | 2 | - Learn CloudWatch concepts: Logs, Metrics, Alarms <br> - Understand how CloudWatch collects data from AWS services | 10/11/2025 | 10/11/2025 | AWS CloudWatch Docs |
-| 3 | - Explore CloudWatch Logs: <br>&emsp; + Locate Lambda log groups <br>&emsp; + View log streams <br>&emsp; + Search error messages | 10/12/2025 | 10/12/2025 | AWS CloudWatch Logs Docs |
-| 4 | - Learn CloudWatch Metrics: <br>&emsp; + Invocation count <br>&emsp; + Errors <br>&emsp; + Duration (Lambda) <br>&emsp; + Latency (API Gateway) | 10/13/2025 | 10/13/2025 | AWS Metrics Docs |
-| 5 | - Create simple CloudWatch Alarms: <br>&emsp; + Alarm for Lambda errors > 0 <br>&emsp; + Alarm for API Gateway 5XX > threshold | 10/14/2025 | 10/14/2025 | AWS Alarms Docs |
-| 6 | - Test alarm triggers using simple failed requests <br> - Review SNS notification options (email alert) <br> - Validate overall monitoring setup | 10/15/2025 | 10/15/2025 | AWS SNS Docs |
+| 3 | - Explore CloudWatch Logs: <br>&emsp; + Locate Lambda log groups <br>&emsp; + View log streams <br>&emsp; + Search error messages | 11/11/2025 | 11/11/2025 | AWS CloudWatch Logs Docs |
+| 4 | - Learn CloudWatch Metrics: <br>&emsp; + Invocation count <br>&emsp; + Errors <br>&emsp; + Duration (Lambda) <br>&emsp; + Latency (API Gateway) | 12/11/2025 | 12/11/2025 | AWS Metrics Docs |
+| 5 | - Create simple CloudWatch Alarms: <br>&emsp; + Alarm for Lambda errors > 0 <br>&emsp; + Alarm for API Gateway 5XX > threshold | 13/11/2025 | 13/11/2025 | AWS Alarms Docs |
+| 6 | - Test alarm triggers using simple failed requests <br> - Review SNS notification options (email alert) <br> - Validate overall monitoring setup | 14/11/2025 | 14/11/2025 | AWS SNS Docs |
 
 ---
 

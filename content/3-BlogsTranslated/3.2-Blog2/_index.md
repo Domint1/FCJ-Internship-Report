@@ -6,231 +6,261 @@ chapter: false
 pre: " <b> 3.2. </b> "
 ---
 
-# Training AI models for skill-based matchmaking using Amazon SageMaker AI
+# Tracing ETL Workloads using AWS X-Ray and AWS Distro for OpenTelemetry
 
-*Authors: Christina Defoor and Alexander Qin - April 16, 2025*
+by Praneeth Reddy Tekula, Deepak Kovvuri, and Viveyk Karri on 30 APR 2025 in [AWS Distro for OpenTelemetry](https://aws.amazon.com/blogs/mt/category/management-tools/aws-distro-for-opentelemetry/), [AWS Glue](https://aws.amazon.com/blogs/mt/category/analytics/aws-glue/), [AWS X-Ray](https://aws.amazon.com/blogs/mt/category/developer-tools/aws-x-ray/), [Management Tools](https://aws.amazon.com/blogs/mt/category/management-tools/), [Technical How-to](https://aws.amazon.com/blogs/mt/category/post-types/technical-how-to/) [Permalink](https://aws.amazon.com/blogs/mt/tracing-etl-workloads-using-aws-x-ray-and-aws-distro-for-opentelemetry/)  [Share](https://aws.amazon.com/vi/blogs/mt/tracing-etl-workloads-using-aws-x-ray-and-aws-distro-for-opentelemetry/#)
 
-***Categories:*** [Amazon DynamoDB](https://aws.amazon.com/blogs/gametech/category/database/amazon-dynamodb/), [Amazon GameLift](https://aws.amazon.com/blogs/gametech/category/game-development/amazon-gamelift/), [Amazon SageMaker](https://aws.amazon.com/blogs/gametech/category/artificial-intelligence/sagemaker/), [Artificial Intelligence](https://aws.amazon.com/blogs/gametech/category/artificial-intelligence/), [AWS Lambda](https://aws.amazon.com/blogs/gametech/category/compute/aws-lambda/), [Compute](https://aws.amazon.com/blogs/gametech/category/compute/), [Database](https://aws.amazon.com/blogs/gametech/category/database/), [Game Development](https://aws.amazon.com/blogs/gametech/category/game-development/), [Industries](https://aws.amazon.com/blogs/gametech/category/industries/), [Media & Entertainment](https://aws.amazon.com/blogs/gametech/category/industries/entertainment/)
+## **Introduction**
 
-In competitive multiplayer games, **skill-based matchmaking** is crucial for creating fun and competitive games. Determining player skill today is difficult due to the vast array of metrics games record (such as hits, misses, assists, time played, level, and more), making it challenging to determine which factors are most indicative of skill. Instead of manually creating algorithms to determine player skill, machine learning (ML) techniques (particularly supervised learning) can automatically identify patterns across game metrics to produce more accurate skill ratings. These ML-derived ratings enable more balanced matchmaking, ultimately enhancing player satisfaction and engagement.
+Data pipelines are essential for modern data-driven companies to gain critical business insights. However, data pipelines commonly fail when new files or datasets from data sources do not conform to the expected schema, leading to downstream job failures, workflow breakdowns, and delayed insights. Additionally, fluctuating data volumes, from a few gigabytes to multiple terabytes, can significantly impact the efficiency and reliability of these pipelines. This can make it challenging for customers to identify the specific ETL job within the data pipeline that failed.
 
-In this first part of our two-part blog series, we'll show you how to use [Amazon SageMaker AI](https://aws.amazon.com/sagemaker-ai/) to quickly build and deploy an automated ML pipeline. Amazon SageMaker AI provides the capabilities to build, train, and deploy ML and foundation models, with fully managed infrastructure, tools, and workflows. The model and pipeline we build will produce a value that is a more reflective and precise rating of each player's skill.
+To address these challenges, monitoring data pipelines in real-time and maintaining an end-to-end view is critical to identify issues early and minimize disruptions. In this blog post, we will explore how to orchestrate an end-to-end ETL pipeline using [AWS Glue](https://aws.amazon.com/glue), [AWS Step Functions](https://aws.amazon.com/pm/step-functions/), [Amazon Simple Storage Service](http://aws.amazon.com/s3) (Amazon S3), [AWS Distro for OpenTelemetry](https://aws.amazon.com/otel/) (ADOT) and [AWS X-ray](https://aws.amazon.com/xray/).
 
-To accomplish this task, we will be building upon the [Guidance for AI-Driven Player Insights on Amazon Web Services (AWS)](https://aws.amazon.com/solutions/guidance/ai-driven-player-insights-on-aws/). The architecture diagram for the guidance shows how game studios can leverage this low-code solution to quickly build, train, and deploy high-quality models that predict player skill using historic player data. Operators just upload their historic player data to [Amazon Simple Storage Service (Amazon S3)](https://aws.amazon.com/s3/). This invokes a complete workflow to extract insights, select algorithms, tune hyperparameters, evaluate models, and deploy the best performing model for your dataset to a prediction API orchestrated by [Amazon SageMaker Pipelines](https://aws.amazon.com/sagemaker-ai/pipelines/).
+## **Solution overview**
 
-<img src="/images/Blog1/Image-1.png" alt=" Architecture diagram of the Guidance for AI-Driven Player Insights on AWS" >
-*Figure 1: Architecture diagram of the Guidance for AI-Driven Player Insights on AWS.*
+This solution addresses a data engineering use case with two-phase pipeline approach: –
 
-Figure 2 shows the architecture you will be implementing in this blog. The diagram shows the flow of how a player's matchmaking request is handled. The matchmaking request triggers [Amazon API Gateway](https://aws.amazon.com/api-gateway/?nc2=type_a), invoking an [AWS Lambda](https://aws.amazon.com/lambda/?nc2=type_a) function which receives the relevant player data from [Amazon DynamoDB](https://aws.amazon.com/dynamodb/?nc2=type_a). The data is then passed to the Amazon SageMaker AI endpoint, which runs an inference to produce the more holistic skill value used by [Amazon GameLift FlexMatch](https://docs.aws.amazon.com/gamelift/latest/flexmatchguide/match-intro.html) in the matchmaking process.
+* Data Cleaning: The data cleaning phase is handled by an ETL job to convert arbitrary data formats (CSV, JSON) to Parquet and performs various transformations, including standardizing column names, dropping unnecessary columns, removing duplicates, filling null values, converting data types, fixing skewness in certain columns.  
+* Data Processing: Next, the data processing phase is handled by another ETL job that calculates, ranks and groups data.
 
-<img src="/images/Blog1/Image-2.png" alt=" Matchmaking workflow using matchmaking simulator" >
-*Figure 2: Matchmaking workflow using matchmaking simulator.*
+The data pipeline is orchestrated end to end using AWS Step Functions, leveraging AWS Glue for ETL jobs that are instrumented with ADOT and custom X-ray helper model for comprehensive tracing. Figure (1) illustrates architectural components involved in the orchestration of an end-to-end ETL pipeline. Here’s how it works: –
 
-The following architecture diagram shows how you will implement this solution in an actual game by connecting FlexMatch to an [Amazon GameLift Servers](https://aws.amazon.com/gamelift/servers/) queue. This triggers GameLift Servers to place or spin up game servers for the newly created matches.
+1. Upload a dataset, to the S3 bucket by creating a folder input.  
+2. This triggers lambda function, that starts a new X-Ray trace and invokes Step Function workflow by passing traceID and S3 object details as an input.  
+3. Step Function workflow passes this traceID as a parameter. Glue Jobs use X-ray helper module to retrieve the parent segment for the current job, and correlate with input traceID from step functions.  
+4. Glue Job – 1 fetches input data set from S3 bucket to perform data cleaning and uploads the output to the same bucket by creating a folder clean.  
+5. After completion of Glue Job \-1, step function workflow triggers Glue Job – 2\.  
+6. Glue Job – 2 fetches input data set from S3 bucket to perform data processing job and uploads the output to the same bucket by creating a folder processed.  
+7. Each Glue Job is instrumented with ADOT, to send collected trace data to OpenTelemetry Collector that is running as a sidecar on ECS.  
+8. OpenTelemetry Collector then pushes collected trace data to AWS X-Ray.
 
-<img src="/images/Blog1/Image-3.png" alt=" Matchmaking workflow as part of a game backend" >
-*Figure 3: Matchmaking workflow as part of a game backend.*
+{{< figure 
+    src="/images/Blog2/Image-1.jpg" 
+    alt="Solution Architecture"
+    class="img-box"
+>}}
+<p style="text-align:center;">Figure 1: Solution Architecture</p>
 
-## Walkthrough:
+By leveraging this solution, we maintain a single trace across the entire ETL pipeline that provides end to end visibility into the data processing workflow. Data engineers and MLOps professionals can gain deep insights, quickly identify bottlenecks or failures, and optimize their data processing workflows for improved efficiency and reliability.
 
-### Prerequisites
+## **Prerequisites**
 
-Before starting, you should have the following prerequisites:
+To deploy this solution, you need:
 
-*   An AWS account with [IAM permissions (administrative access) to create and use a SageMaker AI Domain](https://docs.aws.amazon.com/sagemaker/latest/dg/gs-set-up.html).
-*   A code editor.
-*   To download the data file you will be using for this tutorial, choose [PlayerStats.csv](https://github.com/aws-samples/sample-ai-powered-multiplayer-matchmaking-sagemaker-and-gamelift-flexmatch/blob/main/PlayerStats.csv) on the GitHub repository and select the "Download raw file" option, as shown in Figure 4.
-<img src="/images/Blog1/Image-4.png" alt=" PlayerStats.csv download page" >
-*Figure 4: PlayerStats.csv download page.*
+* An AWS account. If you don’t already have an AWS account, you can [create one](https://aws.amazon.com/).  
+* An [AWS Identity and Access Management (IAM)](http://aws.amazon.com/iam) role that launches [AWS CloudFormation](http://aws.amazon.com/cloudformation) templates which creates IAM roles to access services such as [AWS Glue](https://aws.amazon.com/glue), [AWS X-Ray](https://aws.amazon.com/xray/), [AWS Step Functions](https://aws.amazon.com/step-functions/), [AWS Lambda](https://aws.amazon.com/pm/lambda/), [Amazon ECS](https://aws.amazon.com/ecs/), [AWS CloudMap](https://aws.amazon.com/cloud-map/) and [Amazon Simple Storage Service](http://aws.amazon.com/s3).  
+* Install [AWS CLI.](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html)  
+* Python 3.12 or later  
+* Install [AWS CDK](https://docs.aws.amazon.com/cdk/v2/guide/getting_started.html#getting_started_install).
 
-*   Optional: If you would like to replace the code files we will be modifying throughout this tutorial rather than modifying the code line by line, choose the following links to download each of the files using the "Download raw file" option:
-    *   [workflow.py](https://github.com/aws-samples/sample-ai-powered-multiplayer-matchmaking-sagemaker-and-gamelift-flexmatch/blob/main/workflow.py)
-    *   [evaluation.py](https://github.com/aws-samples/sample-ai-powered-multiplayer-matchmaking-sagemaker-and-gamelift-flexmatch/blob/main/evaluation.py)
-    *   [skill_inference.py](https://github.com/aws-samples/sample-ai-powered-multiplayer-matchmaking-sagemaker-and-gamelift-flexmatch/blob/main/skill_inference.py)
-*   The prerequisites found in the [Guidance for AI-driven player insights on AWS](https://github.com/aws-solutions-library-samples/guidance-for-ai-driven-player-insights-on-aws) GitHub repository.
+## **Deploy the Solution with AWS CDK**
 
-### Setting up SageMaker AI domain
+We will use [AWS CDK](https://aws.amazon.com/cdk/) to deploy the solution. CDK allows defining the infrastructure through a familiar programming language such as Python.
 
-1.  Open the [SageMaker AI console](https://console.aws.amazon.com/sagemaker/).
-2.  Under the left side menu, choose **Domains**.
-3.  Choose **Create domain**.
-    <img src="/images/Blog1/Image-5.png" alt=" Amazon SageMaker domain dashboard" >
-  *Figure 5: Amazon SageMaker domain dashboard.*
-4.  Select the **Quick Setup** option and choose **Set up**.
-    <img src="/images/Blog1/Image-6.png" alt=" Amazon SageMaker domain creation" >
-  *Figure 6: Amazon SageMaker domain creation.*
-
-### Access the Amazon SageMaker Studio dashboard
-
-1.  Select the domain you created in the previous section.
-    <img src="/images/Blog1/Image-7.png" alt=" Amazon SageMaker domain selection" >
-  *Figure 7: Amazon SageMaker domain selection.*   
-
-2.  Under the User profiles section, select the **Launch** dropdown button located next to the profile you want to use. Select **SageMaker Studio** which will open in another tab. Leave this tab open, we will be coming back to this in a later section.
-    <img src="/images/Blog1/Image-8.png" alt=" Domain user profiles" >
-  *Figure 8: Domain user profiles.*
-
-### Deploying the AI-driven player insights solution
-
-Follow the deployment steps provided by the AWS AI-Driven Player Insights repository linked in the prerequisites section of this blog. You will need to deploy the solution using your own device if you do not have access to an AWS Cloud9 development environment. Follow the Deployment Steps up to Step 5 within the guide.
-
-### Understanding AI-driven player insights on AWS
-
-Traditionally, developing effective machine learning models requires data science experience since builders must determine appropriate data pre-processing methods based on metric relationships, select optimal machine learning algorithms, and establish model performance evaluation strategies. With this solution, you will no longer need extensive machine learning experience to build and deploy machine learning models. Instead, you will leverage the feature [Amazon SageMaker Autopilot](https://docs.aws.amazon.com/sagemaker/latest/dg/use-auto-ml.html).
-
-Amazon SageMaker Autopilot automates the complete process of building, training, tuning, and deploying machine learning models. Amazon SageMaker Autopilot analyzes your data, selects algorithms suitable for your problem type, and preprocesses the data for training. It also handles automatic model training and performs hyper-parameter optimization to find the best performing model for your dataset. To accelerate the process of training and deploying machine learning models as data changes over time, our solution provides a pre-defined machine learning pipeline. The pipeline triggers the entire process and model deployment from the moment your data is uploaded to your S3 bucket.
-
-This solution requires a player statistics dataset. The dataset should include relevant performance metrics for your game and the current skill rating used for matchmaking. For this tutorial, we will use the PlayerStats.csv file you downloaded in the prerequisites section.
-
-### Preparing the machine learning pipeline for linear regression
-
-The AI-driven player insights machine learning pipeline, by default, is configured for predicting player churn with an output of "True" or "False". Since the output value for this example refers to categorical data with discrete outcomes, this is set up for a classification problem. In our tutorial, we are looking to output numeric data for a player's "Skill". Since we are looking at supervised learning for numeric data with continuous outcomes, we need to modify this pipeline for linear regression, the most common supervised learning model for predicting numeric data.
-
-1.  In your preferred code editor, open the `/player-insights/constants.py` file and replace its contents with the following (Be sure to replace the values for `SM_DOMAIN_ID` and `REGION` to your own specific values.):
-
-    ```python
-    WORKLOAD_NAME = "PlayerSkills"
-    REGION = "[YOUR REGION]"
-    SM_DOMAIN_ID = "[YOUR SAGEMAKER AI DOMAIN ID]"
-    DATA_FILE = "PlayerStats.csv"
-    TARGET_ATTRIBUTE = "playerSkill"
-    PERFORMANCE_THRESHOLD = 0.00
-    ENDPOINT_TYPE = "SERVERLESS"
-    ```
-
-2.  Since we will be training a linear regression model, we will need to change the evaluation to Mean Squared Error (MSE). Replace the `/player-insights/evaluation.py` main function with the following code:
-
-    ```python
-    if __name__ == "__main__":
-        logger.debug("Starting Evaluation ...")
-        logger.info("Reading Test Predictions")
-        y_pred_path = "/opt/ml/processing/input/predictions/x_test.csv.out"
-        y_pred = pd.read_csv(y_pred_path, header=None).squeeze()
-        logger.info("Reading Test Labels")
-        y_true_path = "/opt/ml/processing/input/true_labels/y_test.csv"
-        y_true = pd.read_csv(y_true_path, header=None).squeeze()
-        mse = mean_squared_error(y_true, y_pred)
-        logger.info(f"Mean Squared Error: {mse}")
-        report_dict = {
-            "regression_metrics": {
-                "mean_squared_error": {
-                    "value": mse,
-                    "standard_deviation": "NaN",
-                },
-            },
-        }
-        output_dir = "/opt/ml/processing/evaluation"
-        pathlib.Path(output_dir).mkdir(parents=True, exist_ok=True)
-        evaluation_path = os.path.join(output_dir, "evaluation_metrics.json")
-        logger.info("Saving Evaluation Report")
-        with open(evaluation_path, "w") as f:
-            f.write(json.dumps(report_dict))
-    ```
-
-3.  Open the `/player-insights/workflow.py` file. Here we are adjusting the machine learning pipeline to use the MSE metric for evaluation rather than the F1 score (since F1 score is used for classification problems). To do this, we will modify the failure step defined around line 227 to send a message indicating the MSE is less than the specified threshold.
-
-    ```python
-    failure_step = FailStep(
-        name="ModelEvaluationFailure",
-        error_message=Join(
-            on=" ",
-            values=["Pipeline execution failure: MSE is less than the specified Evaluation Threshold"]
-        )
-    )
-    ```
-
-4.  You will also need to modify the conditional step defined around line 259 in this same file to use the MSE metric for evaluation instead of the weighted F1 score.
-
-    ```python
-    conditional_step = ConditionStep(
-        name="ModelQualityCondition",
-        conditions=[
-            ConditionGreaterThanOrEqualTo(
-                left=JsonGet(
-                    step_name=evaluation_step.name,
-                    property_file=evaluation_report,
-                    json_path="regression_metrics.mean_squared_error.value"
-                ),
-                right=metric_threshold
-            )
-        ],
-        if_steps=[step_register_model, deployment_step],
-        else_steps=[failure_step]
-    )
-    ```
-
-5.  Verify that the cloud development kit (CDK) deployment correctly synthesizes the proper [AWS CloudFormation](https://aws.amazon.com/cloudformation/?nc2=type_a) templates to ensure your changes are updated in the stack by executing the following command in your terminal: `cdk synth`
-
-6.  Deploy your modified solution by executing the following command in your terminal: `cdk deploy`
-
-7.  Locate the S3 bucket created by the CloudFormation template by opening the [AWS CloudFormation console](https://console.aws.amazon.com/cloudformation/home). Choose the **PlayerSkills-Stack**.
-    <img src="/images/Blog1/Image-9.png" alt=" CloudFormation stack" >
-  *Figure 9: CloudFormation stack.*
-
-8.  On the right side of your console screen, you will see a tab labeled **Outputs**. Select the **Outputs** tab and take note of the value for the key **DataBucketName**.
-    <img src="/images/Blog1/Image-10.png" alt=" CloudFormation stack outputs" >
-  *Figure 10: CloudFormation stack outputs.*
-
-
-9.  Open the [Amazon S3 console](https://console.aws.amazon.com/s3) and choose the bucket that has the name you noted in the previous step. Choose **Upload**.
-    <img src="/images/Blog1/Image-11.png" alt=" Amazon S3 object upload" >
-  *Figure 11: Amazon S3 object upload.*
-
-
-10. Choose **Add files**, choose the CSV file you downloaded in the prerequisites, and choose **Upload**. This will trigger your machine learning pipeline to begin. Training and model deployment will take roughly 30 minutes to be completed.
-    <img src="/images/Blog1/Image-12.png" alt=" Amazon S3 object upload – adding files" >
-  *Figure 12: Amazon S3 object upload – adding files.*
-
-
-### Checking pipeline completion progress
-
-1.  Navigate back to the tab you have with the SageMaker Studio page open. Within the left side menu, choose **Pipelines**.
-    <img src="/images/Blog1/Image-13.png" alt=" Amazon SageMaker Studio home page" >
-  *Figure 13: Amazon SageMaker Studio home page.*
-
-2.  Choose the **PlayerSkills-AutoMLPipeline** and choose your most recent execution.
-    <img src="/images/Blog1/Image-14.png" alt=" Amazon SageMaker pipeline" >
-  *Figure 14: Amazon SageMaker pipeline.*
-    <img src="/images/Blog1/Image-15.png" alt=" Amazon SageMaker pipeline executions" >
-  *Figure 15: Amazon SageMaker pipeline executions.*
-
-3.  After the execution is completed, you will see a graph showing the steps of the pipeline and their results.
-    <img src="/images/Blog1/Image-16.png" alt=" Amazon SageMaker pipeline execution details graph" >
-  *Figure 16: Amazon SageMaker pipeline execution details graph.*
-
-### Testing your machine learning model
-
-1.  Once training and model deployment is completed successfully, there is an Amazon SageMaker AI endpoint that will be created. Locate the Amazon SageMaker AI endpoint by navigating to Amazon SageMaker in the AWS Management Console. On the left side menu, under the **Inference** section, choose the **Endpoints** option. The name of the endpoint in this tutorial is **PlayerSkills-Endpoint**. Note the name of your created endpoint, you will be referring to this later.
-    <img src="/images/Blog1/Image-17.png" alt=" Amazon SageMaker AI endpoint" >
-  *Figure 17: Amazon SageMaker AI endpoint.*
-
-2.  To test the newly created model and endpoint, you can replace lines 23-25 in the `/player-insights/assets/examples/churn_inference.py` file with the following code:
-
-    ```python
-    response = predictor.predict(
-        "10597,20312,602,205,1916,56266,76578,9725,8.0"
-    ).decode("utf-8")
-    ```
-
-3.  Rename the file `churn_inference.py` to `skill_inference.py`.
-
-4.  To run the script, in your command line, navigate to the `/player-insights/assets/examples` directory and run the script with the following commands:
-
+* Clone the repository.
     ```bash
-    cd assets/examples
-    python3 skill_inference.py --endpoint-name PlayerSkills-Endpoint
+    git clone https://github.com/aws-samples/tracing-etl-workloads-otel.git cd tracing-etl-workloads-otel
     ```
+* Create and activate a virtual environment:  
+    * For Linux and macOS.
+    ```bash
+    python3 \-m venv .venv
+    source .venv/bin/activate
+    ```
+    * For Windows.
+    ```bash
+    python \-m venv .venv
+    .venv\\Scripts\\activate
+    ```
+* Install dependencies.
+    ```bash
+    pip install \-r requirements.txt
+    ```
+* Bootstrap the CDK environment (if not already done).
+    ```bash
+    cdk bootstrap
+    ```
+* Deploy the stack.
+    ```bash
+    cdk deploy
+    ```
+This will create all the necessary resources, including S3 buckets, Glue jobs, Step Functions state machine, and Lambda function. Once, the solution is deployed, on your AWS CloudFormation console, you can find the deployed resources on the “OtelSolutionStack” CloudFormation stack resource section.
 
-5.  If the script runs successfully, it will return a response that is a value between 0-1 of the endpoint's output. Changing the values entered in the previous step will change the output values.
+## **Walk-through of the solution**
 
-### Cleaning up resources
+* Upload [Airbnb sample dataset](https://www.kaggle.com/datasets/arianazmoudeh/airbnbopendata) to the S3 ingestion bucket under input prefix folder.
 
-You'll be using what you deployed in this blog in the second part of this series, so we won't clean this up yet. We'll show you how to clean up any resources you've deployed in the next blog.
+    {{< figure 
+        src="/images/Blog2/Image-2.png" 
+        alt="Sample dataset uploaded to S3 bucket"
+        class="img-box"
+    >}}
+    <p style="text-align:center;">Figure 2: Sample dataset uploaded to S3 bucket</p>
 
-In the second part of this series, we'll show you how to use the newly determined "Skill" value in conjunction with Amazon GameLift FlexMatch. Amazon GameLift FlexMatch will handle the logic of matchmaking players while giving you, the developer, a way to adjust which matches are created through a rules-based syntax called **FlexMatch rule sets**.
+* Wait for the AWS StepFunction state machine workflow to succeed.
 
-## Conclusion
+    {{< figure 
+        src="/images/Blog2/Image-3.png" 
+        alt="State machine workflow running Glue jobs"
+        class="img-box"
+    >}}
+    <p style="text-align:center;">Figure 3: State machine workflow running Glue jobs</p>
 
-We showed how to deploy a solution for AI-driven player insights on AWS, and how to build an ML model to more holistically infer a player's Skill value. Based on what makes a player skillful within your game, you can choose what in-game factors that the ML model uses to determine player skill. This results in a more precise player skill that you can use to create balanced and competitive matches.
 
-Be certain to join us again for [Implementing AI-Powered Matchmaking with Amazon GameLift FlexMatch](https://aws.amazon.com/blogs/gametech/implementing-ai-powered-matchmaking-with-amazon-gamelift-flexmatch/), the second blog in this series. We'll show you how to use the results from this blog's model to match players using Amazon GameLift FlexMatch. You will also learn how to simulate matchmaking using the Amazon GameLift Testing Toolkit in order to test both the ML model and your matchmaking parameters.
+* Navigate to [AWS CloudWatch console.](https://us-east-2.console.aws.amazon.com/cloudwatch/home?region=us-east-2#home:) Click on the “Xray traces” in left navigation pane and select the recent traceID.
+
+    {{< figure 
+        src="/images/Blog2/Image-4.png" 
+        alt="Trace retrieval on AWS X-ray"
+        class="img-box"
+    >}}
+    <p style="text-align:center;">Figure 4: Trace retrieval on AWS X-ray</p>
+
+
+* A trace map is displayed by default. It is a visual, end-to-end representation of data flow through each component within the data pipeline
+    {{< figure 
+        src="/images/Blog2/Image-5.png" 
+        alt="Trace Map, an end to end representation of data flow"
+        class="img-box"
+    >}}
+    <p style="text-align:center;">Figure 5: Trace Map, an end to end representation of data flow.</p>
+
+
+* Each component i.e., AWS Lambda, AWS Step Function, and AWS Glue will create its own segment within the trace.
+    {{< figure 
+        src="/images/Blog2/Image-6.png" 
+        alt="Segments in a trace"
+        class="img-box"
+    >}}
+    <p style="text-align:center;">Figure 6: Segments in a trace</p>
+
+
+
+* You will see sub-segments under AWS Glue Segment because of the instrumentation done using AWS Distro for Open Telemetry.
+    {{< figure 
+        src="/images/Blog2/Image-7.png" 
+        alt="Sub-segments in AWS Glue Segment"
+        class="img-box"
+    >}}
+    <p style="text-align:center;">Figure 7: Sub-segments in AWS Glue Segment</p>
+
+
+Figure 7: Sub-segments in AWS Glue Segment
+
+This level of detail allows data engineers to identify which specific operation in a glue job is taking the most time.
+
+## **Detailed Explanation of Trace Correlation**
+
+The solution uses a custom X-Ray helper module to correlate traces across the ETL pipeline. Here’s how it works
+
+* Glue Jobs:  
+    * At the start of each Glue job, X-Ray helper module is used to retrieve the parent segment for the current job:
+        ```python
+        xray_trace = xray_helper.XRayTrace(TRACE_ID) 
+        parent_id = xray_trace.retrieve_segment_for_step(JOB_NAME)  
+        ```
+    * If a parent segment is found, a new ADOT context is created using the X-Ray propagator:
+        ```python
+        carrier = {'X-Amzn-Trace-Id': f"Root={xray_trace.trace_id};Parent={parent_id};Sampled=1"} 
+        propagator = AwsXRayPropagator() context = propagator.extract(carrier=carrier)
+        ```
+    * The Glue job execution is wrapped in a span using this context:
+        ```python
+        with tracer.start_as_current_span("Glue Job Execution", context=context, kind=trace.SpanKind.SERVER):     
+        # Job execution code
+        ```
+
+    * Throughout the job, individual operations are wrapped in spans for detailed tracing:
+        ```python
+        with tracer.start_as_current_span("Read Data", attributes={'S3Path': s3_path}):     
+        # Read data operation
+        ```
+ 
+* Trace Emission:  
+    * The ADOT instrumentation is configured to send trace data to the OpenTelemetry Collector running as a sidecar. The OpenTelemetry Collector then forwards the trace data to AWS X-Ray.
+        ```python
+        processor = BatchSpanProcessor(OTLPSpanExporter(endpoint=f"http://{OTLP_ENDPOINT}:4318/v1/traces")) 
+        tracer_provider = TracerProvider(resource=resource, active_span_processor=processor)
+        ```
+By using this approach, we maintain a single trace across the entire ETL pipeline, from the initial S3 upload trigger through the Step Functions execution and individual Glue job runs.
+
+## **Understanding Distributed Tracing Concepts**
+
+It’s important to understand some key concepts in distributed tracing:
+
+* **Traces:** A trace represents the entire journey of a request or operation as it moves through a distributed system. In our ETL pipeline, a trace begins when data is uploaded to S3 and ends when the final processed data is written to Amazon S3.  
+* **Spans:** Spans are the building blocks of a trace. Each span represents a unit of work or operation within the trace. For example, in our Glue jobs, we create spans for operations like “Read Data”, “Drop Columns”, or “Calculate Minimum Total Spend”. Spans have a start time, end time, and can include additional metadata like logs or tags. Example from our Glue job:
+```python
+with tracer.start_as_current_span("Calculate Minimum Total Spend"): 
+spark_df = spark_df.withColumn("minimum_total_spend", (col("price") + col("service_fee")) * col('minimum_nights'))
+```
+
+* **Parent-Child Relationships:** Spans can have parent-child relationships, creating a hierarchical structure within a trace. In our solution, the overall Glue job execution is a parent span, while individual operations within the job are child spans.  
+* **Segments:** In AWS X-Ray, a segment is similar to a span, but represents a unit of work done by a single component in your application. In our case, each Lambda invocation, Step Functions execution, and Glue job run creates a segment.  
+
+* **Subsegments:** These are equivalent to child spans. They represent smaller units of work within a segment. In our Glue jobs, the individual operations we trace become subsegments in X-Ray.  
+
+* **Trace Context Propagation:** To maintain a single trace across different components of a distributed system, we need to propagate the trace context. This is what allows us to link the Lambda function, Step Functions execution, and Glue jobs into a single trace. We do this by passing the trace ID and parent segment ID between components. Example of propagating context in our Glue job:
+```python
+carrier = {'X-Amzn-Trace-Id': f"Root={xray_trace.trace_id};Parent={parent_id};Sampled=1"}       
+propagator = AwsXRayPropagator()     
+context = propagator.extract(carrier=carrier)  
+```
+
+* **Attributes and Annotations:** These are key-value pairs that provide additional context to spans or segments. We use these to add useful information like S3 paths, job names, or data statistics. Example from our code:  
+```python
+with tracer.start_as_current_span("Glue Job Execution", context=context, kind=trace.SpanKind.SERVER, attributes={'job_name': JOB_NAME, 'job_run_id': JOB_RUN_ID})
+```
+* **Sampling:** In high-volume systems, it’s often impractical to trace every single request. Sampling is the practice of only tracing a subset of requests. AWS X-Ray provides configurable sampling rules to control how much data you collect and store.
+
+## **OpenTelemetry Collector Configuration**
+
+A key component in our tracing setup is the OpenTelemetry Collector, which runs as a sidecar alongside Glue jobs. The collector is responsible for receiving trace data from our instrumented Glue jobs and forwarding it to AWS X-Ray.
+
+Let’s break down the configuration file (otel-agent-config.yaml) that defines how the collector operates.
+
+* Receivers:  
+  * The collector is configured to receive OpenTelemetry Protocol (OTLP) data via both gRPC (port 4317) and HTTP (port 4318). This allows our Glue jobs to send trace data using either protocol.  
+* Exporters:  
+  * The awsxray exporter is configured to send the collected trace data to AWS X-Ray. This is how our trace data ultimately ends up in X-Ray for visualization and analysis.  
+* Processors:  
+  * A memory limiter processor is configured to prevent the collector from consuming too much memory. It’s set to limit memory usage to 100 MiB and check every 5 seconds.
+
+```yaml
+receivers:
+  otlp:
+    protocols:
+      grpc:
+        endpoint: 0.0.0.0:4317
+      http:
+        endpoint: 0.0.0.0:4318
+exporters:
+  awsxray:
+    region: us-east-2
+processors:
+  memory_limiter:
+    limit_mib: 100
+    check_interval: 5s
+service:
+  pipelines:
+    traces:
+      processors:
+        - memory_limiter
+      receivers:
+        - otlp
+      exporters:
+        - awsxray
+```
+This OpenTelemetry Collector configuration ensures the effective capture, processing, and export of trace data to AWS X-Ray for visibility and analysis of our data processing pipelines
+
+## **Clean up**
+
+You can either delete the stack through the [CloudFormation console](https://us-east-2.console.aws.amazon.com/cloudformation/home?region=us-east-2#/stacks?filteringText=&filteringStatus=active&viewNested=true) or use AWS CDK destroy from the root folder.
+```bash
+cdk destroy
+```
+When deleting a stack, most resources will be deleted upon stack deletion, however that’s not the case for all resources. In this solution, lambda functions will generate [Amazon CloudWatch](https://aws.amazon.com/cloudwatch) logs that are retained even after stack deletion. These won’t be tracked by CloudFormation because they’re not part of the stack, so the logs will persist. Follow steps [here](https://docs.aws.amazon.com/solutions/latest/video-on-demand-on-aws-foundation/deleting-the-cloudwatch-logs.html), to manually delete any logs that you don’t want to retain from CloudWatch console.
+
+## **Conclusion**
+
+This solution provides an end-to-end observability view of a data pipeline workflow by propagating context and tracing individual operations through AWS Distro for OpenTelemetry and AWS X-Ray. This enables data engineers to quickly troubleshoot failures, optimize performance, and gain insights into how data characteristics impact downstream processing. Such observability is crucial for modern data platforms involving complex, distributed workflows across multiple components and services.

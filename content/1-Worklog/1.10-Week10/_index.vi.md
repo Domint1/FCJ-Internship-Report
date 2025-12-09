@@ -22,10 +22,10 @@ pre: " <b> 1.10. </b> "
 | Thứ | Công việc | Ngày bắt đầu | Ngày hoàn thành | Tài liệu tham khảo |
 | --- | --------- | ------------ | ---------------- | ------------------- |
 | 2 | - Học khái niệm CloudWatch: Logs, Metrics, Alarms <br> - Hiểu cách CloudWatch thu thập dữ liệu | 10/11/2025 | 10/11/2025 | AWS CloudWatch Docs |
-| 3 | - Xem CloudWatch Logs: <br>&emsp; + Log nhóm của Lambda <br>&emsp; + Log stream <br>&emsp; + Tìm lỗi | 10/12/2025 | 10/12/2025 | CloudWatch Logs Docs |
-| 4 | - Học các Metrics quan trọng: <br>&emsp; + Invocation count <br>&emsp; + Errors <br>&emsp; + Duration (Lambda) <br>&emsp; + Latency (API Gateway) | 10/13/2025 | 10/13/2025 | AWS Metrics Docs |
-| 5 | - Tạo CloudWatch Alarms: <br>&emsp; + Alarm khi Lambda lỗi > 0 <br>&emsp; + Alarm khi API Gateway có nhiều 5XX | 10/14/2025 | 10/14/2025 | AWS Alarm Docs |
-| 6 | - Kiểm tra alarm bằng cách tạo lỗi test <br> - Xem thông báo qua SNS (email) <br> - Xác nhận hệ thống monitor đã hoạt động | 10/15/2025 | 10/15/2025 | AWS SNS Docs |
+| 3 | - Xem CloudWatch Logs: <br>&emsp; + Log nhóm của Lambda <br>&emsp; + Log stream <br>&emsp; + Tìm lỗi | 11/11/2025 | 11/11/2025 | CloudWatch Logs Docs |
+| 4 | - Học các Metrics quan trọng: <br>&emsp; + Invocation count <br>&emsp; + Errors <br>&emsp; + Duration (Lambda) <br>&emsp; + Latency (API Gateway) | 12/11/2025 | 12/11/2025 | AWS Metrics Docs |
+| 5 | - Tạo CloudWatch Alarms: <br>&emsp; + Alarm khi Lambda lỗi > 0 <br>&emsp; + Alarm khi API Gateway có nhiều 5XX | 13/11/2025 | 13/11/2025 | AWS Alarm Docs |
+| 6 | - Kiểm tra alarm bằng cách tạo lỗi test <br> - Xem thông báo qua SNS (email) <br> - Xác nhận hệ thống monitor đã hoạt động | 14/11/2025 | 14/11/2025 | AWS SNS Docs |
 
 
 ### Kết quả đạt được tuần 10:

@@ -13,6 +13,7 @@ pre: " <b> 3.3. </b> "
 **Source:** [AWS Public Sector Blog](https://aws.amazon.com/blogs/publicsector/aws-imagine-grant-expands-global-reach-now-supporting-nonprofits-in-six-countries/)
 
 ---
+<img src="/images/Blog3/Image.png" alt="AWS branded background design with text overlay that says &quot;The AWS Imagine Grant launches the 2025 cycle in six countries, expanding its global reach" >
 
 Today, Amazon Web Services (AWS) launched the 2025 [AWS Imagine Grant](https://aws.amazon.com/government-education/nonprofits/aws-imagine-grant-program/) cycle in six countries. The AWS Imagine Grant is a public grant opportunity open to registered nonprofit organizations who are using cloud technology to accelerate their missions. Now in its eighth year, the AWS Imagine Grant is expanding to nonprofits beyond the US, UK, and Ireland, adding Canada, Australia, and New Zealand. The AWS Imagine Grant provides resources such as unrestricted financial support, [AWS Promotional Credit](https://aws.amazon.com/awscredits/), and technical support to help organizations implement their technology-driven solutions.
 

@@ -18,6 +18,7 @@ pre: " <b> 1.6. </b> "
 
 
 ### Các công việc cần triển khai trong tuần này:
+
 | Thứ | Công việc | Ngày bắt đầu | Ngày hoàn thành | Tài liệu tham khảo |
 | --- | --------- | ------------ | ---------------- | ------------------- |
 | 2 | - Tìm hiểu cấu trúc API Gateway: Resource, Method, Stage <br> - Phân biệt hành vi của GET và POST | 13/10/2025 | 13/10/2025 | AWS API Gateway Docs |
