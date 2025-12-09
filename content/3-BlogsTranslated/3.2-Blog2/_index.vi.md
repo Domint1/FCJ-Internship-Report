@@ -38,8 +38,13 @@ Data pipeline được điều phối từ đầu đến cuối (end to end) b�
 7.  Mỗi Glue Job được tích hợp ADOT để gửi dữ liệu trace đã thu thập đến OpenTelemetry Collector, chạy dưới dạng một sidecar trên ECS.
 8.  OpenTelemetry Collector sau đó đẩy dữ liệu trace đã thu thập đến AWS X-Ray.
 
-<img src="/images/Blog2/Image-1.jpg" alt=" Solution Architecture" >
-*Hình 1: Solution Architecture*
+{{< figure 
+    src="/images/Blog2/Image-1.jpg" 
+    alt="Solution Architecture"
+    class="img-box"
+>}}
+<p style="text-align:center;">Hình 1: Solution Architecture</p>
+
 
 Nhờ cách này, chúng ta duy trì một trace duy nhất xuyên suốt pipeline ETL, giúp mọi người có thể nhìn thấy luồng dữ liệu end-to-end. Các kỹ sư dữ liệu và người làm MLOps có thể có insight sâu, nhanh chóng xác định điểm tắc nghẽn hoặc lỗi, và tối ưu hóa workflow để tăng hiệu quả và độ tin cậy.
 
@@ -101,28 +106,63 @@ cdk deploy
 ## Hướng dẫn chi tiết về giải pháp
 
 1.  Tải [dataset mẫu Airbnb](https://www.kaggle.com/datasets/arianazmoudeh/airbnbopendata) lên S3 ingestion bucket, trong thư mục con (prefix folder).
+{{< figure 
+    src="/images/Blog2/Image-2.png" 
+    alt="Solution Architecture"
+    class="img-box"
+>}}
 
-*Hình 2: Dataset mẫu đã được tải lên S3 bucket.*
+<p style="text-align:center;">Hình 2: Dataset mẫu đã được tải lên S3 bucket.</p>
+
 
 2.  Chờ AWS Step Functions hoàn tất workflow của state machine và trạng thái hiển thị “Succeeded”.
 
-*Hình 3: Workflow của State Machine đang chạy các Glue Jobs*
+{{< figure 
+    src="/images/Blog2/Image-3.png" 
+    alt="Solution Architecture"
+    class="img-box"
+>}}
+<p style="text-align:center;">Hình 3: Workflow của State Machine đang chạy các Glue Jobs</p>
 
 3.  Điều hướng đến [AWS CloudWatch Console](https://us-east-2.console.aws.amazon.com/cloudwatch/home?region=us-east-2#home:). Trong thanh điều hướng bên trái, chọn “X-Ray traces”, sau đó chọn traceID gần nhất.
 
-*Hình 4: Truy xuất Trace trên AWS X-Ray*
+{{< figure 
+    src="/images/Blog2/Image-4.png" 
+    alt="Solution Architecture"
+    class="img-box"
+>}}
+<p style="text-align:center;">Hình 4: Truy xuất Trace trên AWS X-Ray</p>
+
 
 4.  Một bản đồ trace (trace map) sẽ được hiển thị mặc định. Đây là biểu diễn trực quan, end-to-end của luồng dữ liệu đi qua từng thành phần trong data pipeline.
 
-*Hình 5: Trace Map – biểu diễn end-to-end của luồng dữ liệu (data flow)*
+{{< figure 
+    src="/images/Blog2/Image-5.png" 
+    alt="Solution Architecture"
+    class="img-box"
+>}}
+<p style="text-align:center;">Hình 5: Trace Map – biểu diễn end-to-end của luồng dữ liệu (data flow)</p>
+
 
 5.  Mỗi thành phần, bao gồm AWS Lambda, AWS Step Functions, và AWS Glue, sẽ tạo một segment riêng biệt trong trace.
 
-*Hình 6: Các Segment trong một Trace*
+{{< figure 
+    src="/images/Blog2/Image-6.png" 
+    alt="Solution Architecture"
+    class="img-box"
+>}}
+<p style="text-align:center;">Hình 6: Các Segment trong một Trace</p>
+
 
 6.  Bạn sẽ thấy các sub-segment nằm trong AWS Glue Segment, do quá trình instrumentation được thực hiện bằng AWS Distro for OpenTelemetry (ADOT).
 
-*Hình 7: Các Sub-segment trong AWS Glue Segment*
+{{< figure 
+    src="/images/Blog2/Image-7.png" 
+    alt="Solution Architecture"
+    class="img-box"
+>}}
+<p style="text-align:center;">Hình 7: Các Sub-segment trong AWS Glue Segment</p>
+
 
 7.  Mức độ chi tiết này giúp data engineers xác định được thao tác cụ thể nào trong Glue job đang tiêu tốn nhiều thời gian nhất.
 
