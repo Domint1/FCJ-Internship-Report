@@ -1,6 +1,6 @@
 ---
 title : "Mô phỏng On-premises DNS "
-date : "`r Sys.Date()`"
+date : "2025-12-08"
 weight : 4
 chapter : false
 pre : " <b> 5.4.4 </b> "

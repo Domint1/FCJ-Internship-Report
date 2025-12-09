@@ -1,57 +1,41 @@
 ---
 title: "Week 12 Worklog"
-date: "`r Sys.Date()`"
+date: "2025-12-08"
 weight: 2
 chapter: false
 pre: " <b> 1.12. </b> "
 ---
-{{% notice warning %}} 
-⚠️ **Note:** The following information is for reference purposes only. Please **do not copy verbatim** for your own report, including this warning.
-{{% /notice %}}
 
 
 ### Week 12 Objectives:
 
-* Connect and get acquainted with members of First Cloud Journey.
-* Understand basic AWS services, how to use the console & CLI.
+* Review all services learned throughout the journey (Lambda, API Gateway, DynamoDB, S3, CloudFront, WAF).
+* Test the entire system end-to-end to ensure everything works as expected.
+* Polish documentation and Hugo website for final submission.
+* Prepare slides, summaries, and explanations for the workshop/demo.
+* Ensure the environment is production-ready from a student perspective.
+
+---
 
 ### Tasks to be carried out this week:
-| Day | Task                                                                                                                                                                                                   | Start Date | Completion Date | Reference Material                        |
-| --- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------- | --------------- | ----------------------------------------- |
-| 2   | - Get acquainted with FCJ members <br> - Read and take note of internship unit rules and regulations                                                                                                   | 08/11/2025 | 08/11/2025      |
-| 3   | - Learn about AWS and its types of services <br>&emsp; + Compute <br>&emsp; + Storage <br>&emsp; + Networking <br>&emsp; + Database <br>&emsp; + ... <br>                                              | 08/12/2025 | 08/12/2025      | <https://cloudjourney.awsstudygroup.com/> |
-| 4   | - Create AWS Free Tier account <br> - Learn about AWS Console & AWS CLI <br> - **Practice:** <br>&emsp; + Create AWS account <br>&emsp; + Install & configure AWS CLI <br> &emsp; + How to use AWS CLI | 08/13/2025 | 08/13/2025      | <https://cloudjourney.awsstudygroup.com/> |
-| 5   | - Learn basic EC2: <br>&emsp; + Instance types <br>&emsp; + AMI <br>&emsp; + EBS <br>&emsp; + ... <br> - SSH connection methods to EC2 <br> - Learn about Elastic IP   <br>                            | 08/14/2025 | 08/15/2025      | <https://cloudjourney.awsstudygroup.com/> |
-| 6   | - **Practice:** <br>&emsp; + Launch an EC2 instance <br>&emsp; + Connect via SSH <br>&emsp; + Attach an EBS volume                                                                                     | 08/15/2025 | 08/15/2025      | <https://cloudjourney.awsstudygroup.com/> |
 
+| Day | Task | Start Date | Completion Date | Reference Material |
+| --- | ---- | ---------- | ---------------- | ------------------ |
+| 2 | - Review Week 1 → Week 11 content <br> - Identify missing pages or unclear sections in Hugo site | 10/25/2025 | 10/25/2025 | Hugo Docs |
+| 3 | - Perform end-to-end testing: <br>&emsp; + API → Lambda → DynamoDB <br>&emsp; + S3 static hosting <br>&emsp; + CloudFront delivery <br>&emsp; + WAF filtering | 10/26/2025 | 10/26/2025 | AWS Docs |
+| 4 | - Fix broken links or formatting in the Hugo site <br> - Update diagrams or screenshots where needed | 10/27/2025 | 10/27/2025 | Internal Notes |
+| 5 | - Prepare workshop/demo materials: <br>&emsp; + Slides <br>&emsp; + Summary notes <br>&emsp; + Key takeaways and lessons learned | 10/28/2025 | 10/28/2025 | Internal Docs |
+| 6 | - Final deployment check: <br>&emsp; + CloudFront cache invalidation <br>&emsp; + Verify IAM permissions <br>&emsp; + Check WAF logs <br> - Mark the entire system as “ready for demo” | 10/29/2025 | 10/29/2025 | AWS Docs |
+
+---
 
 ### Week 12 Achievements:
 
-* Understood what AWS is and mastered the basic service groups: 
-  * Compute
-  * Storage
-  * Networking 
-  * Database
-  * ...
+* Completed a full review of all weekly learning content.
+* Conducted end-to-end testing of all key components (API, database, hosting, security).
+* Polished the Hugo documentation site with updated content and corrected structure.
+* Prepared final workshop/demo materials, including slides and summaries.
+* Validated that the system is functioning properly and ready for the final presentation.
+* Concluded the 12-week learning journey with a well-documented and functional setup.
 
-* Successfully created and configured an AWS Free Tier account.
-
-* Became familiar with the AWS Management Console and learned how to find, access, and use services via the web interface.
-
-* Installed and configured AWS CLI on the computer, including:
-  * Access Key
-  * Secret Key
-  * Default Region
-  * ...
-
-* Used AWS CLI to perform basic operations such as:
-
-  * Check account & configuration information
-  * Retrieve the list of regions
-  * View EC2 service
-  * Create and manage key pairs
-  * Check information about running services
-  * ...
-
-* Acquired the ability to connect between the web interface and CLI to manage AWS resources in parallel.
-* ...
+---

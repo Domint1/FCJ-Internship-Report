@@ -1,126 +1,50 @@
 ---
 title: "Blog 3"
-date: "`r Sys.Date()`"
+date: "2025-12-08"
 weight: 1
 chapter: false
 pre: " <b> 3.3. </b> "
 ---
-{{% notice warning %}}
-⚠️ **Note:** The information below is for reference purposes only. Please **do not copy verbatim** for your report, including this warning.
-{{% /notice %}}
 
-# Getting Started with Healthcare Data Lakes: Using Microservices
+# The AWS Imagine Grant launches the 2025 cycle in six countries, expanding its global reach
 
-Data lakes can help hospitals and healthcare facilities turn data into business insights, maintain business continuity, and protect patient privacy. A **data lake** is a centralized, managed, and secure repository to store all your data, both in its raw and processed forms for analysis. Data lakes allow you to break down data silos and combine different types of analytics to gain insights and make better business decisions.
-
-This blog post is part of a larger series on getting started with setting up a healthcare data lake. In my final post of the series, *“Getting Started with Healthcare Data Lakes: Diving into Amazon Cognito”*, I focused on the specifics of using Amazon Cognito and Attribute Based Access Control (ABAC) to authenticate and authorize users in the healthcare data lake solution. In this blog, I detail how the solution evolved at a foundational level, including the design decisions I made and the additional features used. You can access the code samples for the solution in this Git repo for reference.
+**By:** Jeff Kratz
+**Date:** March 26, 2025
+**Source:** [AWS Public Sector Blog](https://aws.amazon.com/blogs/publicsector/aws-imagine-grant-expands-global-reach-now-supporting-nonprofits-in-six-countries/)
 
 ---
 
-## Architecture Guidance
+Today, Amazon Web Services (AWS) launched the 2025 [AWS Imagine Grant](https://aws.amazon.com/government-education/nonprofits/aws-imagine-grant-program/) cycle in six countries. The AWS Imagine Grant is a public grant opportunity open to registered nonprofit organizations who are using cloud technology to accelerate their missions. Now in its eighth year, the AWS Imagine Grant is expanding to nonprofits beyond the US, UK, and Ireland, adding Canada, Australia, and New Zealand. The AWS Imagine Grant provides resources such as unrestricted financial support, [AWS Promotional Credit](https://aws.amazon.com/awscredits/), and technical support to help organizations implement their technology-driven solutions.
 
-The main change since the last presentation of the overall architecture is the decomposition of a single service into a set of smaller services to improve maintainability and flexibility. Integrating a large volume of diverse healthcare data often requires specialized connectors for each format; by keeping them encapsulated separately as microservices, we can add, remove, and modify each connector without affecting the others. The microservices are loosely coupled via publish/subscribe messaging centered in what I call the “pub/sub hub.”
+Cloud technology has proven to transform mission delivery for nonprofit organizations, and now cutting-edge tools like machine learning (ML) and generative AI are creating new opportunities to address urgent social and environmental challenges. AWS is committed to making these technologies available to everyone while enabling responsible deployment that centers on people. Building on the success of its US grant program, AWS is expanding its *Pathfinder – Generative AI* award to the UK this year. This initiative offers eligible nonprofits funding for generative AI projects, along with expert technical guidance through the [AWS Generative AI Innovation Center](https://aws.amazon.com/ai/generative-ai/innovation-center/).
 
-This solution represents what I would consider another reasonable sprint iteration from my last post. The scope is still limited to the ingestion and basic parsing of **HL7v2 messages** formatted in **Encoding Rules 7 (ER7)** through a REST interface.
+## Application Details
 
-**The solution architecture is now as follows:**
+The 2025 AWS Imagine Grant application instructions are now available for download in the [US](https://aws.amazon.com/government-education/nonprofits/aws-imagine-grant-program/), [UK andIreland](https://aws.amazon.com/government-education/nonprofits/aws-imagine-grant-program/aws-imagine-grant-uk/), [Canada](https://aws.amazon.com/government-education/nonprofits/aws-imagine-grant-program/aws-imagine-grant-canada/), and [Australia and New Zealand](https://aws.amazon.com/government-education/nonprofits/aws-imagine-grant-program/aws-imagine-grant-anz/), and application submissions begin April 14, 2025
 
-> *Figure 1. Overall architecture; colored boxes represent distinct services.*
+Nonprofit organizations are encouraged to apply for the AWS Imagine Grant award category that best fits their goals – regardless of their size and mission area. Award categories, packages, and deadlines vary by region. The first application submission deadline for the grant(s) is June 2, 2025. This year’s award categories are as follows:
 
----
+### The Pathfinder – Generative AI
+The *Pathfinder award* is designed for highly innovative, mission-critical projects that leverage generative AI. A Pathfinder project will have the potential to produce a scaled, repeatable solution that directly accelerates mission achievement and may affect an entire industry or field. Projects in the Pathfinder category may include service types mentioned in the Go Further, Faster and Momentum to Modernize categories, but must include the use of generative AI as a required additional workload. Pathfinder projects must be built on existing data strategy and foundation, and the generative AI use case is already defined with implementation in the planning phase.
 
-While the term *microservices* has some inherent ambiguity, certain traits are common:  
-- Small, autonomous, loosely coupled  
-- Reusable, communicating through well-defined interfaces  
-- Specialized to do one thing well  
-- Often implemented in an **event-driven architecture**
+Winners for the Pathfinder – Generative AI award may receive up to $200,000 USD of unrestricted financial support and up to $100,000 USD in AWS Promotional Credit, varied by program country. Winners will receive project implementation support from the [Generative AI Innovation Center](https://aws.amazon.com/generative-ai/innovation-center/), as well as access to AWS training support and an opportunity for AWS marketing promotion. The Pathfinder–Generative AI award category is available in the US and the UK.
 
-When determining where to draw boundaries between microservices, consider:  
-- **Intrinsic**: technology used, performance, reliability, scalability  
-- **Extrinsic**: dependent functionality, rate of change, reusability  
-- **Human**: team ownership, managing *cognitive load*
+### Go Further, Faster
+The Go Further, Faster award provides support for think big, highly innovative projects that leverage the cloud. These projects have the potential to produce scalable, repeatable solutions that may impact an entire industry or field. They are force multipliers for organizations and include the application of and/or seek integrations with advanced cloud services, such as AI/ML, high performance computing (HPC), internet of things (IoT), and more.
 
----
+Winners for the Go Further, Faster award may receive up to $150,000 USD of unrestricted financial support and up to $100,000 USD in AWS Promotional Credit, varied by program country. Winners will gain access to project implementation guidance from AWS technical specialist(s), AWS training support, and an opportunity for AWS marketing promotion. The Go Further, Faster award category is available in the US, UK, Ireland, Canada, Australia, and New Zealand.
 
-## Technology Choices and Communication Scope
 
-| Communication scope                       | Technologies / patterns to consider                                                        |
-| ----------------------------------------- | ------------------------------------------------------------------------------------------ |
-| Within a single microservice              | Amazon Simple Queue Service (Amazon SQS), AWS Step Functions                               |
-| Between microservices in a single service | AWS CloudFormation cross-stack references, Amazon Simple Notification Service (Amazon SNS) |
-| Between services                          | Amazon EventBridge, AWS Cloud Map, Amazon API Gateway                                      |
+### 3. Momentum to Modernize
+As nonprofits seek to transform and enhance their core mission operations with technology, organizations need funding for foundational technology projects, such as migrating servers to the cloud and modernizing new and existing applications. The Momentum to Modernize award provides resources for these transformational infrastructure projects, alongside AWS Promotional Credit and implementation support.
 
----
+Winners for the Momentum to Modernize award may receive up to $50,000 USD of unrestricted financial support and up to $20,000 USD in **AWS Promotional Credit**. Winners will gain access to project implementation guidance from AWS technical specialists, AWS training support, and an opportunity for AWS marketing promotion. The Momentum to Modernize award category is available in the US only.
 
-## The Pub/Sub Hub
+[Previous Imagine Grant winners](https://aws.amazon.com/government-education/nonprofits/aws-imagine-grant-program/grant-winners/) are innovating with cloud technology across mission areas. From developing new medications to protecting critical ecosystems, these projects drive social impact and empower communities through innovative solutions.
 
-Using a **hub-and-spoke** architecture (or message broker) works well with a small number of tightly related microservices.  
-- Each microservice depends only on the *hub*  
-- Inter-microservice connections are limited to the contents of the published message  
-- Reduces the number of synchronous calls since pub/sub is a one-way asynchronous *push*
+## How to apply for the AWS Imagine Grant
+Visit the [AWS Imagine Grant](https://aws.amazon.com/government-education/nonprofits/aws-imagine-grant-program/) site to learn more about eligibility, award packages, application deadlines, and instructions. Please closely review all information, such as [the eligibility guidelines in the FAQ](https://aws.amazon.com/government-education/nonprofits/aws-imagine-grant-program/aws-imagine-grant-faq/).
 
-Drawback: **coordination and monitoring** are needed to avoid microservices processing the wrong message.
 
----
-
-## Core Microservice
-
-Provides foundational data and communication layer, including:  
-- **Amazon S3** bucket for data  
-- **Amazon DynamoDB** for data catalog  
-- **AWS Lambda** to write messages into the data lake and catalog  
-- **Amazon SNS** topic as the *hub*  
-- **Amazon S3** bucket for artifacts such as Lambda code
-
-> Only allow indirect write access to the data lake through a Lambda function → ensures consistency.
-
----
-
-## Front Door Microservice
-
-- Provides an API Gateway for external REST interaction  
-- Authentication & authorization based on **OIDC** via **Amazon Cognito**  
-- Self-managed *deduplication* mechanism using DynamoDB instead of SNS FIFO because:  
-  1. SNS deduplication TTL is only 5 minutes  
-  2. SNS FIFO requires SQS FIFO  
-  3. Ability to proactively notify the sender that the message is a duplicate  
-
----
-
-## Staging ER7 Microservice
-
-- Lambda “trigger” subscribed to the pub/sub hub, filtering messages by attribute  
-- Step Functions Express Workflow to convert ER7 → JSON  
-- Two Lambdas:  
-  1. Fix ER7 formatting (newline, carriage return)  
-  2. Parsing logic  
-- Result or error is pushed back into the pub/sub hub  
-
----
-
-## New Features in the Solution
-
-### 1. AWS CloudFormation Cross-Stack References
-Example *outputs* in the core microservice:
-```yaml
-Outputs:
-  Bucket:
-    Value: !Ref Bucket
-    Export:
-      Name: !Sub ${AWS::StackName}-Bucket
-  ArtifactBucket:
-    Value: !Ref ArtifactBucket
-    Export:
-      Name: !Sub ${AWS::StackName}-ArtifactBucket
-  Topic:
-    Value: !Ref Topic
-    Export:
-      Name: !Sub ${AWS::StackName}-Topic
-  Catalog:
-    Value: !Ref Catalog
-    Export:
-      Name: !Sub ${AWS::StackName}-Catalog
-  CatalogArn:
-    Value: !GetAtt Catalog.Arn
-    Export:
-      Name: !Sub ${AWS::StackName}-CatalogArn
+## About the AWS Imagine Grant
+Since the launch of the [AWS Imagine Grant](https://aws.amazon.com/government-education/nonprofits/aws-imagine-grant-program/) in 2018, AWS has awarded more than $14 million in unrestricted funding, AWS Promotional Credits, and technical expertise to more than 130 nonprofit organizations. Learn more about [past recipients](https://aws.amazon.com/government-education/nonprofits/aws-imagine-grant-program/grant-winners/) and how nonprofits use AWS to advance their missions around the world at the [AWS for Nonprofits hub](https://aws.amazon.com/government-education/nonprofits/).

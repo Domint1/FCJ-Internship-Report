@@ -1,57 +1,42 @@
 ---
 title: "Week 11 Worklog"
-date: "`r Sys.Date()`"
+date: "2025-12-08"
 weight: 2
 chapter: false
 pre: " <b> 1.11. </b> "
 ---
-{{% notice warning %}} 
-⚠️ **Note:** The following information is for reference purposes only. Please **do not copy verbatim** for your own report, including this warning.
-{{% /notice %}}
 
 
 ### Week 11 Objectives:
 
-* Connect and get acquainted with members of First Cloud Journey.
-* Understand basic AWS services, how to use the console & CLI.
+* Learn the basics of cloud security for web applications.
+* Understand AWS WAF and how it protects APIs and static websites.
+* Learn common web attack patterns (SQLi, XSS, bad bots) at a beginner level.
+* Create a simple WAF WebACL and attach it to CloudFront or API Gateway.
+* Enable basic AWS Managed Rule Groups for quick protection.
+
+---
 
 ### Tasks to be carried out this week:
-| Day | Task                                                                                                                                                                                                   | Start Date | Completion Date | Reference Material                        |
-| --- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------- | --------------- | ----------------------------------------- |
-| 2   | - Get acquainted with FCJ members <br> - Read and take note of internship unit rules and regulations                                                                                                   | 08/11/2025 | 08/11/2025      |
-| 3   | - Learn about AWS and its types of services <br>&emsp; + Compute <br>&emsp; + Storage <br>&emsp; + Networking <br>&emsp; + Database <br>&emsp; + ... <br>                                              | 08/12/2025 | 08/12/2025      | <https://cloudjourney.awsstudygroup.com/> |
-| 4   | - Create AWS Free Tier account <br> - Learn about AWS Console & AWS CLI <br> - **Practice:** <br>&emsp; + Create AWS account <br>&emsp; + Install & configure AWS CLI <br> &emsp; + How to use AWS CLI | 08/13/2025 | 08/13/2025      | <https://cloudjourney.awsstudygroup.com/> |
-| 5   | - Learn basic EC2: <br>&emsp; + Instance types <br>&emsp; + AMI <br>&emsp; + EBS <br>&emsp; + ... <br> - SSH connection methods to EC2 <br> - Learn about Elastic IP   <br>                            | 08/14/2025 | 08/15/2025      | <https://cloudjourney.awsstudygroup.com/> |
-| 6   | - **Practice:** <br>&emsp; + Launch an EC2 instance <br>&emsp; + Connect via SSH <br>&emsp; + Attach an EBS volume                                                                                     | 08/15/2025 | 08/15/2025      | <https://cloudjourney.awsstudygroup.com/> |
 
+| Day | Task | Start Date | Completion Date | Reference Material |
+| --- | ---- | ---------- | ---------------- | ------------------ |
+| 2 | - Learn basic web security concepts: <br>&emsp; + What attacks WAF can block <br>&emsp; + Layer 7 vs Layer 4 protection <br>&emsp; + OWASP Top 10 (simplified) | 10/18/2025 | 10/18/2025 | AWS Security Docs |
+| 3 | - Learn AWS WAF components: <br>&emsp; + WebACL <br>&emsp; + Rules & Rule Groups <br>&emsp; + Action: Allow / Block / Count | 10/19/2025 | 10/19/2025 | AWS WAF Docs |
+| 4 | - Create a WAF WebACL in console <br> - Attach the WebACL to CloudFront distribution (or API Gateway) <br> - Enable AWS Managed Rules (CommonRuleSet) | 10/20/2025 | 10/20/2025 | AWS WAF Managed Rules |
+| 5 | - Add simple custom rules: <br>&emsp; + Block IPs <br>&emsp; + Block known malicious paths (/wp-admin, /xmlrpc.php) <br>&emsp; + Rate-based rule (beginner level) | 10/21/2025 | 10/21/2025 | AWS WAF Docs |
+| 6 | - Test WAF behavior by sending sample requests: <br>&emsp; + Normal traffic (should pass) <br>&emsp; + SQL-like inputs (should be blocked by managed rules) <br> - Review logs in CloudWatch or WAF Dashboard | 10/22/2025 | 10/22/2025 | AWS WAF Logging |
+
+---
 
 ### Week 11 Achievements:
 
-* Understood what AWS is and mastered the basic service groups: 
-  * Compute
-  * Storage
-  * Networking 
-  * Database
-  * ...
+* Understood the role of WAF in protecting cloud applications from common Layer 7 attacks.
+* Learned AWS WAF structure and how WebACL, Rules, and Rule Groups work together.
+* Successfully created a WAF WebACL and attached it to CloudFront or API Gateway.
+* Enabled AWS Managed Rule Groups for protection against common exploits.
+* Added simple custom rules such as IP blocking and path filtering.
+* Performed basic testing of WAF to observe blocked requests and allowed traffic.
+* Built core security fundamentals that will help secure the final project.
 
-* Successfully created and configured an AWS Free Tier account.
-
-* Became familiar with the AWS Management Console and learned how to find, access, and use services via the web interface.
-
-* Installed and configured AWS CLI on the computer, including:
-  * Access Key
-  * Secret Key
-  * Default Region
-  * ...
-
-* Used AWS CLI to perform basic operations such as:
-
-  * Check account & configuration information
-  * Retrieve the list of regions
-  * View EC2 service
-  * Create and manage key pairs
-  * Check information about running services
-  * ...
-
-* Acquired the ability to connect between the web interface and CLI to manage AWS resources in parallel.
-* ...
+---

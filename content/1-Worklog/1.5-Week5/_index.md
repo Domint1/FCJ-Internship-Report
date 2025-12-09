@@ -1,57 +1,41 @@
 ---
 title: "Week 5 Worklog"
-date: "`r Sys.Date()`"
+date: "2025-12-08"
 weight: 1
 chapter: false
 pre: " <b> 1.5. </b> "
 ---
-{{% notice warning %}} 
-⚠️ **Note:** The following information is for reference purposes only. Please **do not copy verbatim** for your own report, including this warning.
-{{% /notice %}}
 
 
 ### Week 5 Objectives:
 
-* Connect and get acquainted with members of First Cloud Journey.
-* Understand basic AWS services, how to use the console & CLI.
+* Strengthen knowledge on AWS Lambda by practicing real functions.
+* Learn how Lambda interacts with other AWS services.
+* Understand the basics of DynamoDB (NoSQL key-value database).
+* Learn how to perform simple read/write operations in DynamoDB.
+* Learn CloudWatch Logs for monitoring Lambda executions.
+
+---
 
 ### Tasks to be carried out this week:
-| Day | Task                                                                                                                                                                                                   | Start Date | Completion Date | Reference Material                        |
-| --- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------- | --------------- | ----------------------------------------- |
-| 2   | - Get acquainted with FCJ members <br> - Read and take note of internship unit rules and regulations                                                                                                   | 08/11/2025 | 08/11/2025      |
-| 3   | - Learn about AWS and its types of services <br>&emsp; + Compute <br>&emsp; + Storage <br>&emsp; + Networking <br>&emsp; + Database <br>&emsp; + ... <br>                                              | 08/12/2025 | 08/12/2025      | <https://cloudjourney.awsstudygroup.com/> |
-| 4   | - Create AWS Free Tier account <br> - Learn about AWS Console & AWS CLI <br> - **Practice:** <br>&emsp; + Create AWS account <br>&emsp; + Install & configure AWS CLI <br> &emsp; + How to use AWS CLI | 08/13/2025 | 08/13/2025      | <https://cloudjourney.awsstudygroup.com/> |
-| 5   | - Learn basic EC2: <br>&emsp; + Instance types <br>&emsp; + AMI <br>&emsp; + EBS <br>&emsp; + ... <br> - SSH connection methods to EC2 <br> - Learn about Elastic IP   <br>                            | 08/14/2025 | 08/15/2025      | <https://cloudjourney.awsstudygroup.com/> |
-| 6   | - **Practice:** <br>&emsp; + Launch an EC2 instance <br>&emsp; + Connect via SSH <br>&emsp; + Attach an EBS volume                                                                                     | 08/15/2025 | 08/15/2025      | <https://cloudjourney.awsstudygroup.com/> |
 
+| Day | Task | Start Date | Completion Date | Reference Material |
+| --- | ---- | ---------- | ---------------- | ------------------ |
+| 2 | - Review Lambda structure: handler, event object, return values <br> - Understand synchronous vs asynchronous invocation (beginner level) | 06/10/2025 | 06/10/2025 | AWS Lambda Docs |
+| 3 | - Learn DynamoDB basics: Table, Partition Key (PK), Sort Key (SK) <br> - Understand NoSQL differences compared to relational databases | 07/10/2025 | 07/10/2025 | AWS DynamoDB Docs |
+| 4 | - Create a DynamoDB table (simple PK only) <br> - Insert items manually using AWS Console <br> - Query & Scan table using the Console | 08/10/2025 | 08/10/2025 | AWS DynamoDB Docs |
+| 5 | - Write a Lambda function that reads an item from DynamoDB <br> - Learn IAM Role permission `dynamodb:GetItem` | 09/10/2025 | 09/10/2025 |AWS Lambda + DynamoDB Docs |
+| 6 | - Write a Lambda function that writes an item to DynamoDB <br> - Check CloudWatch Logs for Lambda execution results | 10/10/2025 | 10/10/2025 | AWS CloudWatch Docs |
+
+---
 
 ### Week 5 Achievements:
 
-* Understood what AWS is and mastered the basic service groups: 
-  * Compute
-  * Storage
-  * Networking 
-  * Database
-  * ...
+* Gained clearer understanding of how AWS Lambda receives input and returns structured output.
+* Learned the basics of DynamoDB and how to store simple key-value data.
+* Successfully created a DynamoDB table and performed Query/Scan operations.
+* Wrote Lambda functions to read and write data to DynamoDB.
+* Understood how IAM permissions control Lambda’s access to DynamoDB.
+* Learned how to use CloudWatch Logs to view Lambda output and debug errors.
 
-* Successfully created and configured an AWS Free Tier account.
-
-* Became familiar with the AWS Management Console and learned how to find, access, and use services via the web interface.
-
-* Installed and configured AWS CLI on the computer, including:
-  * Access Key
-  * Secret Key
-  * Default Region
-  * ...
-
-* Used AWS CLI to perform basic operations such as:
-
-  * Check account & configuration information
-  * Retrieve the list of regions
-  * View EC2 service
-  * Create and manage key pairs
-  * Check information about running services
-  * ...
-
-* Acquired the ability to connect between the web interface and CLI to manage AWS resources in parallel.
-* ...
+---

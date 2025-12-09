@@ -1,59 +1,37 @@
 ---
 title: "Worklog Tuần 9"
-date: "`r Sys.Date()`"
+date: "2025-12-08"
 weight: 1
 chapter: false
 pre: " <b> 1.9. </b> "
 ---
-{{% notice warning %}}
-⚠️ **Lưu ý:** Các thông tin dưới đây chỉ nhằm mục đích tham khảo, vui lòng **không sao chép nguyên văn** cho bài báo cáo của bạn kể cả warning này.
-{{% /notice %}}
+
 
 
 ### Mục tiêu tuần 9:
 
-* Kết nối, làm quen với các thành viên trong First Cloud Journey.
-* Hiểu dịch vụ AWS cơ bản, cách dùng console & CLI.
+* Học các khái niệm xác thực cơ bản (authentication).
+* Phân biệt authentication và authorization.
+* Xem lại IAM roles/policies dành cho ứng dụng.
+* Học các khái niệm đơn giản về Cognito (User Pool, App Client).
+* Thử nghiệm login cơ bản qua Hosted UI của Cognito.
 
 ### Các công việc cần triển khai trong tuần này:
-| Thứ | Công việc                                                                                                                                                                                   | Ngày bắt đầu | Ngày hoàn thành | Nguồn tài liệu                            |
-| --- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------ | --------------- | ----------------------------------------- |
-| 2   | - Làm quen với các thành viên FCJ <br> - Đọc và lưu ý các nội quy, quy định tại đơn vị thực tập                                                                                             | 11/08/2025   | 11/08/2025      |
-| 3   | - Tìm hiểu AWS và các loại dịch vụ <br>&emsp; + Compute <br>&emsp; + Storage <br>&emsp; + Networking <br>&emsp; + Database <br>&emsp; + ... <br>                                            | 12/08/2025   | 12/08/2025      | <https://cloudjourney.awsstudygroup.com/> |
-| 4   | - Tạo AWS Free Tier account <br> - Tìm hiểu AWS Console & AWS CLI <br> - **Thực hành:** <br>&emsp; + Tạo AWS account <br>&emsp; + Cài AWS CLI & cấu hình <br> &emsp; + Cách sử dụng AWS CLI | 13/08/2025   | 13/08/2025      | <https://cloudjourney.awsstudygroup.com/> |
-| 5   | - Tìm hiểu EC2 cơ bản: <br>&emsp; + Instance types <br>&emsp; + AMI <br>&emsp; + EBS <br>&emsp; + ... <br> - Các cách remote SSH vào EC2 <br> - Tìm hiểu Elastic IP   <br>                  | 14/08/2025   | 15/08/2025      | <https://cloudjourney.awsstudygroup.com/> |
-| 6   | - **Thực hành:** <br>&emsp; + Tạo EC2 instance <br>&emsp; + Kết nối SSH <br>&emsp; + Gắn EBS volume                                                                                         | 15/08/2025   | 15/08/2025      | <https://cloudjourney.awsstudygroup.com/> |
+| Thứ | Công việc | Ngày bắt đầu | Ngày hoàn thành | Tài liệu tham khảo |
+| --- | --------- | ------------ | ---------------- | ------------------- |
+| 2 | - Học các khái niệm xác thực: <br>&emsp; + Authentication là gì? <br>&emsp; + Authorization là gì? <br>&emsp; + Vì sao hệ thống cần quản lý danh tính? | 10/04/2025 | 10/04/2025 | AWS Security Docs |
+| 3 | - Ôn lại IAM dành cho application: Roles, Permissions <br> - Hiểu ứng dụng nhận quyền truy cập AWS như thế nào | 10/05/2025 | 10/05/2025 | AWS IAM Docs |
+| 4 | - Học cơ bản về Cognito: <br>&emsp; + User Pool <br>&emsp; + App Client <br>&emsp; + Hosted UI | 10/06/2025 | 10/06/2025 | AWS Cognito Docs |
+| 5 | - Tạo Cognito User Pool <br> - Cấu hình password policy <br> - Tạo user test trong User Pool | 10/07/2025 | 10/07/2025 | AWS Cognito Docs |
+| 6 | - Bật Hosted UI <br> - Test login, signup, reset password <br> - Quan sát ID token và access token | 10/08/2025 | 10/08/2025 | AWS Cognito Docs |
 
 
 ### Kết quả đạt được tuần 9:
-
-* Hiểu AWS là gì và nắm được các nhóm dịch vụ cơ bản: 
-  * Compute
-  * Storage
-  * Networking 
-  * Database
-  * ...
-
-* Đã tạo và cấu hình AWS Free Tier account thành công.
-
-* Làm quen với AWS Management Console và biết cách tìm, truy cập, sử dụng dịch vụ từ giao diện web.
-
-* Cài đặt và cấu hình AWS CLI trên máy tính bao gồm:
-  * Access Key
-  * Secret Key
-  * Region mặc định
-  * ...
-
-* Sử dụng AWS CLI để thực hiện các thao tác cơ bản như:
-
-  * Kiểm tra thông tin tài khoản & cấu hình
-  * Lấy danh sách region
-  * Xem dịch vụ EC2
-  * Tạo và quản lý key pair
-  * Kiểm tra thông tin dịch vụ đang chạy
-  * ...
-
-* Có khả năng kết nối giữa giao diện web và CLI để quản lý tài nguyên AWS song song.
-* ...
+* Hiểu rõ sự khác nhau giữa authentication và authorization.
+* Nắm vai trò của IAM trong môi trường ứng dụng.
+* Tìm hiểu các thành phần cơ bản của Cognito.
+* Tạo User Pool thành công và thiết lập các cấu hình cơ bản.
+* Thử login, signup qua Hosted UI và quan sát token trả về.
+* Có nền tảng để kết hợp xác thực trong hệ thống serverless sau này.
 
 

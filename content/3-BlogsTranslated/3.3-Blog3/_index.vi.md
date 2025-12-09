@@ -1,127 +1,48 @@
 ---
 title: "Blog 3"
-date: "`r Sys.Date()`"
+date: "2025-12-08"
 weight: 1
 chapter: false
 pre: " <b> 3.3. </b> "
 ---
 
-{{% notice warning %}}
-⚠️ **Lưu ý:** Các thông tin dưới đây chỉ nhằm mục đích tham khảo, vui lòng **không sao chép nguyên văn** cho bài báo cáo của bạn kể cả warning này.
-{{% /notice %}}
+## AWS Imagine Grant khởi động chu kỳ 2025 tại sáu quốc gia, mở rộng tầm ảnh hưởng toàn cầu
 
-# Bắt đầu với healthcare data lakes: Sử dụng microservices
+*Tác giả: Jeff Kratz – 26 tháng 3, 2025*
+*Chuyên mục:* [Amazon Machine Learning](https://aws.amazon.com/blogs/publicsector/category/artificial-intelligence/amazon-machine-learning/), [Announcements](https://aws.amazon.com/blogs/publicsector/category/post-types/announcements/), [Artificial Intelligence](https://aws.amazon.com/blogs/publicsector/category/artificial-intelligence/), [Featured](https://aws.amazon.com/blogs/publicsector/category/featured/), [Generative AI](https://aws.amazon.com/blogs/publicsector/category/artificial-intelligence/generative-ai/), [Nonprofit](https://aws.amazon.com/blogs/publicsector/category/public-sector/nonprofit/), [Public Sector](https://aws.amazon.com/blogs/publicsector/category/public-sector/)
 
-Các data lake có thể giúp các bệnh viện và cơ sở y tế chuyển dữ liệu thành những thông tin chi tiết về doanh nghiệp và duy trì hoạt động kinh doanh liên tục, đồng thời bảo vệ quyền riêng tư của bệnh nhân. **Data lake** là một kho lưu trữ tập trung, được quản lý và bảo mật để lưu trữ tất cả dữ liệu của bạn, cả ở dạng ban đầu và đã xử lý để phân tích. data lake cho phép bạn chia nhỏ các kho chứa dữ liệu và kết hợp các loại phân tích khác nhau để có được thông tin chi tiết và đưa ra các quyết định kinh doanh tốt hơn.
+Hôm nay, Amazon Web Services (AWS) khởi động chương trình [AWS Imagine Grant](https://aws.amazon.com/government-education/nonprofits/aws-imagine-grant-program/) cho chu kỳ năm 2025 tại sáu quốc gia. Chương trình AWS Imagine Grant là một cơ hội tài trợ công khai dành cho các tổ chức phi lợi nhuận đã đăng ký, đang sử dụng công nghệ đám mây (cloud technology) để đẩy nhanh sứ mệnh của mình. Hiện nay đã bước vào năm thứ tám, AWS Imagine Grant mở rộng vượt ra ngoài Hoa Kỳ, Vương quốc Anh và Ireland, bao gồm thêm Canada, Úc và New Zealand. AWS Imagine Grant cung cấp các nguồn lực như hỗ trợ tài chính không ràng buộc (unrestricted financial support), [AWS Promotional Credit](https://aws.amazon.com/awscredits/), và hỗ trợ kỹ thuật để giúp các tổ chức thực hiện các giải pháp công nghệ của họ.
 
-Bài đăng trên blog này là một phần của loạt bài lớn hơn về việc bắt đầu cài đặt data lake dành cho lĩnh vực y tế. Trong bài đăng blog cuối cùng của tôi trong loạt bài, *“Bắt đầu với data lake dành cho lĩnh vực y tế: Đào sâu vào Amazon Cognito”*, tôi tập trung vào các chi tiết cụ thể của việc sử dụng Amazon Cognito và Attribute Based Access Control (ABAC) để xác thực và ủy quyền người dùng trong giải pháp data lake y tế. Trong blog này, tôi trình bày chi tiết cách giải pháp đã phát triển ở cấp độ cơ bản, bao gồm các quyết định thiết kế mà tôi đã đưa ra và các tính năng bổ sung được sử dụng. Bạn có thể truy cập các code samples cho giải pháp tại Git repo này để tham khảo.
+Công nghệ đám mây đã chứng minh khả năng biến đổi cách thức thực hiện nhiệm vụ cho các tổ chức phi lợi nhuận, và giờ đây các công cụ tiên tiến như machine learning (ML) và generative AI đang tạo ra cơ hội mới để giải quyết những thách thức xã hội và môi trường cấp bách. AWS cam kết làm cho những công nghệ này trở nên khả dụng cho mọi người trong khi cho phép triển khai có trách nhiệm, đặt con người làm trung tâm. Dựa trên thành công từ chương trình tài trợ tại Hoa Kỳ, năm nay AWS mở rộng giải thưởng *Pathfinder – Generative AI* sang Vương quốc Anh. Sáng kiến này cung cấp tài trợ cho các tổ chức phi lợi nhuận đủ điều kiện để thực hiện các dự án về Generative AI, đồng thời cung cấp hướng dẫn kỹ thuật chuyên sâu thông qua [AWS Generative AI Innovation Center](https://aws.amazon.com/ai/generative-ai/innovation-center/).
 
----
+Hướng dẫn đăng ký AWS Imagine Grant năm 2025 hiện đã có sẵn để tải xuống tại các quốc gia: [Hoa Kỳ](https://aws.amazon.com/government-education/nonprofits/aws-imagine-grant-program/), [Vương quốc Anh và Ireland](https://aws.amazon.com/government-education/nonprofits/aws-imagine-grant-program/aws-imagine-grant-uk/), [Canada](https://aws.amazon.com/government-education/nonprofits/aws-imagine-grant-program/aws-imagine-grant-canada/), cũng như [Úc và New Zealand](https://aws.amazon.com/government-education/nonprofits/aws-imagine-grant-program/aws-imagine-grant-anz/). Việc nộp hồ sơ đăng ký sẽ bắt đầu từ ngày 14 tháng 4 năm 2025.
 
-## Hướng dẫn kiến trúc
+Các tổ chức phi lợi nhuận được khuyến khích nộp đơn cho hạng mục giải thưởng AWS Imagine Grant phù hợp nhất với mục tiêu của họ – không phân biệt quy mô hay lĩnh vực hoạt động. Các hạng mục giải thưởng, gói hỗ trợ và thời hạn nộp hồ sơ sẽ khác nhau tùy theo khu vực. Hạn nộp hồ sơ đăng ký tài trợ đầu tiên là ngày 2 tháng 6 năm 2025. Các hạng mục giải thưởng năm nay bao gồm như sau:
 
-Thay đổi chính kể từ lần trình bày cuối cùng của kiến trúc tổng thể là việc tách dịch vụ đơn lẻ thành một tập hợp các dịch vụ nhỏ để cải thiện khả năng bảo trì và tính linh hoạt. Việc tích hợp một lượng lớn dữ liệu y tế khác nhau thường yêu cầu các trình kết nối chuyên biệt cho từng định dạng; bằng cách giữ chúng được đóng gói riêng biệt với microservices, chúng ta có thể thêm, xóa và sửa đổi từng trình kết nối mà không ảnh hưởng đến những kết nối khác. Các microservices được kết nối rời thông qua tin nhắn publish/subscribe tập trung trong cái mà tôi gọi là “pub/sub hub”.
+### Pathfinder – Generative AI
 
-Giải pháp này đại diện cho những gì tôi sẽ coi là một lần lặp nước rút hợp lý khác từ last post của tôi. Phạm vi vẫn được giới hạn trong việc nhập và phân tích cú pháp đơn giản của các **HL7v2 messages** được định dạng theo **Quy tắc mã hóa 7 (ER7)** thông qua giao diện REST.
+Giải thưởng *Pathfinder* được thiết kế cho các dự án quan trọng, đổi mới cao, mà có tận dụng generative AI. Một dự án Pathfinder cần có tiềm năng tạo ra giải pháp có thể mở rộng, lặp lại và thúc đẩy nhanh việc hoàn thành sứ mệnh, đồng thời có thể ảnh hưởng đến cả ngành hoặc lĩnh vực. Dự án thuộc hạng mục Pathfinder có thể bao gồm các loại dịch vụ đã được nhắc trong các hạng mục *Go Further, Faster* và *Momentum to Modernize*, nhưng bắt buộc phải sử dụng generative AI như một workload bổ sung. Các dự án Pathfinder cần được xây dựng trên chiến lược dữ liệu hiện có và cơ sở nền tảng, và trường hợp sử dụng generative AI đã được xác định rõ với giai đoạn triển khai trong kế hoạch.
 
-**Kiến trúc giải pháp bây giờ như sau:**
+Người chiến thắng giải thưởng *Pathfinder – Generative AI* có thể nhận tới 200.000 USD hỗ trợ tài chính không ràng buộc và tới 100.000 USD AWS Promotional Credit, tùy theo chương trình từng quốc gia. Họ cũng sẽ nhận được hỗ trợ triển khai dự án từ [AWS Generative AI Innovation Center](https://aws.amazon.com/generative-ai/innovation-center/), cùng quyền truy cập vào đào tạo AWS và cơ hội quảng bá từ AWS marketing. Hạng mục giải thưởng Pathfinder–Generative AI áp dụng tại Mỹ và Vương quốc Anh.
 
-> *Hình 1. Kiến trúc tổng thể; những ô màu thể hiện những dịch vụ riêng biệt.*
+### Go Further, Faster
 
----
+Giải thưởng *Go Further, Faster* hỗ trợ các dự án nghĩ lớn (think big), đổi mới cao mà có tận dụng cloud. Những dự án này có tiềm năng tạo ra các giải pháp có thể mở rộng, lặp lại và có ảnh hưởng đến cả ngành hay lĩnh vực nào đấy. Chúng đóng vai trò như “bộ nhân lực” cho các tổ chức và có thể tích hợp các dịch vụ đám mây tiên tiến như AI/ML, điện toán hiệu năng cao (HPC), Internet of Things (IoT) và hơn thế nữa.
 
-Mặc dù thuật ngữ *microservices* có một số sự mơ hồ cố hữu, một số đặc điểm là chung:  
-- Chúng nhỏ, tự chủ, kết hợp rời rạc  
-- Có thể tái sử dụng, giao tiếp thông qua giao diện được xác định rõ  
-- Chuyên biệt để giải quyết một việc  
-- Thường được triển khai trong **event-driven architecture**
+Người chiến thắng giải thưởng Go Further, Faster có thể nhận tới 150.000 USD hỗ trợ tài chính không ràng buộc và tới 100.000 USD AWS Promotional Credit, tùy theo chương trình từng quốc gia. Họ sẽ được hướng dẫn triển khai từ chuyên gia kỹ thuật AWS, được hỗ trợ đào tạo AWS, và có cơ hội quảng bá qua marketing của AWS. Hạng mục giải thưởng *Go Further, Faster* áp dụng tại Mỹ, Vương quốc Anh, Ireland, Canada, Úc và New Zealand.
 
-Khi xác định vị trí tạo ranh giới giữa các microservices, cần cân nhắc:  
-- **Nội tại**: công nghệ được sử dụng, hiệu suất, độ tin cậy, khả năng mở rộng  
-- **Bên ngoài**: chức năng phụ thuộc, tần suất thay đổi, khả năng tái sử dụng  
-- **Con người**: quyền sở hữu nhóm, quản lý *cognitive load*
+### Momentum to Modernize
 
----
+Khi các tổ chức phi lợi nhuận muốn chuyển đổi và nâng cao các hoạt động cốt lõi bằng công nghệ, họ cần kinh phí cho các dự án hạ tầng nền tảng như di chuyển máy chủ lên đám mây (migrating servers), hiện đại hóa ứng dụng mới và hiện có. Giải thưởng *Momentum to Modernize* cung cấp tài nguyên cho những dự án hạ tầng mang tính chuyển đổi, kèm AWS Promotional Credit và hỗ trợ triển khai.
 
-## Lựa chọn công nghệ và phạm vi giao tiếp
+Người chiến thắng giải thưởng *Momentum to Modernize* có thể nhận tới 50.000 USD hỗ trợ tài chính không ràng buộc và tới 20.000 USD **AWS Promotional Credit**. Họ được hướng dẫn triển khai từ chuyên gia kỹ thuật AWS, hỗ trợ đào tạo AWS và cơ hội quảng bá qua marketing AWS. Hạng mục này hiện chỉ áp dụng tại Mỹ.
 
-| Phạm vi giao tiếp                        | Các công nghệ / mô hình cần xem xét                                                        |
-| ---------------------------------------- | ------------------------------------------------------------------------------------------ |
-| Trong một microservice                   | Amazon Simple Queue Service (Amazon SQS), AWS Step Functions                               |
-| Giữa các microservices trong một dịch vụ | AWS CloudFormation cross-stack references, Amazon Simple Notification Service (Amazon SNS) |
-| Giữa các dịch vụ                         | Amazon EventBridge, AWS Cloud Map, Amazon API Gateway                                      |
+[Các tổ chức từng đoạt giải Imagine Grant](https://aws.amazon.com/government-education/nonprofits/aws-imagine-grant-program/grant-winners/) đang thực hiện công cuộc đổi mới với công nghệ đám mây trên nhiều lĩnh vực khác nhau. Từ việc phát triển thuốc mới đến bảo vệ hệ sinh thái quan trọng, các dự án này thúc đẩy tác động xã hội và phát triển cộng đồng thông qua những giải pháp đổi mới.
 
----
+### Cách nộp hồ sơ cho AWS Imagine Grant
 
-## The pub/sub hub
+Truy cập trang [AWS Imagine Grant](https://aws.amazon.com/government-education/nonprofits/aws-imagine-grant-program/) để tìm hiểu thêm về điều kiện tham gia, gói giải thưởng, hạn đăng ký và các hướng dẫn liên quan. Hãy xem kỹ các thông tin như [hướng dẫn điều kiện tham gia trong phần FAQ](https://aws.amazon.com/government-education/nonprofits/aws-imagine-grant-program/aws-imagine-grant-faq/).
 
-Việc sử dụng kiến trúc **hub-and-spoke** (hay message broker) hoạt động tốt với một số lượng nhỏ các microservices liên quan chặt chẽ.  
-- Mỗi microservice chỉ phụ thuộc vào *hub*  
-- Kết nối giữa các microservice chỉ giới hạn ở nội dung của message được xuất  
-- Giảm số lượng synchronous calls vì pub/sub là *push* không đồng bộ một chiều
+### Giới thiệu về AWS Imagine Grant
 
-Nhược điểm: cần **phối hợp và giám sát** để tránh microservice xử lý nhầm message.
-
----
-
-## Core microservice
-
-Cung cấp dữ liệu nền tảng và lớp truyền thông, gồm:  
-- **Amazon S3** bucket cho dữ liệu  
-- **Amazon DynamoDB** cho danh mục dữ liệu  
-- **AWS Lambda** để ghi message vào data lake và danh mục  
-- **Amazon SNS** topic làm *hub*  
-- **Amazon S3** bucket cho artifacts như mã Lambda
-
-> Chỉ cho phép truy cập ghi gián tiếp vào data lake qua hàm Lambda → đảm bảo nhất quán.
-
----
-
-## Front door microservice
-
-- Cung cấp API Gateway để tương tác REST bên ngoài  
-- Xác thực & ủy quyền dựa trên **OIDC** thông qua **Amazon Cognito**  
-- Cơ chế *deduplication* tự quản lý bằng DynamoDB thay vì SNS FIFO vì:
-  1. SNS deduplication TTL chỉ 5 phút
-  2. SNS FIFO yêu cầu SQS FIFO
-  3. Chủ động báo cho sender biết message là bản sao
-
----
-
-## Staging ER7 microservice
-
-- Lambda “trigger” đăng ký với pub/sub hub, lọc message theo attribute  
-- Step Functions Express Workflow để chuyển ER7 → JSON  
-- Hai Lambda:
-  1. Sửa format ER7 (newline, carriage return)
-  2. Parsing logic  
-- Kết quả hoặc lỗi được đẩy lại vào pub/sub hub
-
----
-
-## Tính năng mới trong giải pháp
-
-### 1. AWS CloudFormation cross-stack references
-Ví dụ *outputs* trong core microservice:
-```yaml
-Outputs:
-  Bucket:
-    Value: !Ref Bucket
-    Export:
-      Name: !Sub ${AWS::StackName}-Bucket
-  ArtifactBucket:
-    Value: !Ref ArtifactBucket
-    Export:
-      Name: !Sub ${AWS::StackName}-ArtifactBucket
-  Topic:
-    Value: !Ref Topic
-    Export:
-      Name: !Sub ${AWS::StackName}-Topic
-  Catalog:
-    Value: !Ref Catalog
-    Export:
-      Name: !Sub ${AWS::StackName}-Catalog
-  CatalogArn:
-    Value: !GetAtt Catalog.Arn
-    Export:
-      Name: !Sub ${AWS::StackName}-CatalogArn
+Kể từ khi bắt đầu [AWS Imagine Grant](https://aws.amazon.com/government-education/nonprofits/aws-imagine-grant-program/) vào năm 2018, AWS đã trao hơn 14 triệu đô la Mỹ (USD) về hỗ trợ tài chính không ràng buộc, AWS Promotional Credits, và chuyên môn kỹ thuật đến hơn 130 tổ chức phi lợi nhuận. Bạn có thể tìm hiểu thêm về các [đối tượng từng đạt giải](https://aws.amazon.com/government-education/nonprofits/aws-imagine-grant-program/grant-winners/) và cách các tổ chức phi lợi nhuận sử dụng AWS để thúc đẩy sứ mệnh của họ trên toàn cầu tại [AWS for Nonprofits hub](https://aws.amazon.com/government-education/nonprofits/).

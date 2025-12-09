@@ -1,6 +1,6 @@
 ---
 title: "Internship Report"
-date: "`r Sys.Date()`"
+date: "2025-12-08"
 weight: 1
 chapter: false
 ---
@@ -8,18 +8,16 @@ chapter: false
     
 # Internship Report
 
-{{% notice warning %}}
-⚠️ **Note:** The information below is for reference purposes only. Please **do not copy verbatim** for your report, including this warning.
-{{% /notice %}}
+
 
 ### Student Information:
-&emsp; **Full Name:** Nguyen Van A
+&emsp; **Full Name:** Nguyen Dao Nguyen
 
 &emsp; **Phone Number:** 0989888999 
 
-&emsp; **Email:** Anguyenvan@gmail.com
+&emsp; **Email:** Nguyen2412qb@gmail.com
 
-&emsp; **University:** Ho Chi Minh City University of Technology and Education
+&emsp; **University:** FPT University
 
 &emsp; **Major:** Information Technology
 
@@ -31,7 +29,7 @@ chapter: false
 
 &emsp; **Internship Duration:** From 12/08/2025 to 12/11/2025
 
-![Your profile picture](/images/avatar.png)
+<img src="/images/avatar.png" alt="Your profile picture" style="width: 450px; height: 600px; object-fit: cover;">
 
 ### Report Content
 

@@ -1,57 +1,41 @@
 ---
 title: "Week 4 Worklog"
-date: "`r Sys.Date()`"
+date: "2025-12-08"
 weight: 1
 chapter: false
 pre: " <b> 1.4. </b> "
 ---
-{{% notice warning %}} 
-⚠️ **Note:** The following information is for reference purposes only. Please **do not copy verbatim** for your own report, including this warning.
-{{% /notice %}}
 
 
 ### Week 4 Objectives:
 
-* Connect and get acquainted with members of First Cloud Journey.
-* Understand basic AWS services, how to use the console & CLI.
+* Learn AWS IAM in more depth: Users, Groups, Policies, Roles.
+* Understand how IAM provides secure access to AWS services.
+* Learn basic Lambda concepts (what it is, how it works, when to use it).
+* Learn introductory API Gateway concepts.
+* Prepare the foundation for integrating services in future weeks.
+
+---
 
 ### Tasks to be carried out this week:
-| Day | Task                                                                                                                                                                                                   | Start Date | Completion Date | Reference Material                        |
-| --- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------- | --------------- | ----------------------------------------- |
-| 2   | - Get acquainted with FCJ members <br> - Read and take note of internship unit rules and regulations                                                                                                   | 08/11/2025 | 08/11/2025      |
-| 3   | - Learn about AWS and its types of services <br>&emsp; + Compute <br>&emsp; + Storage <br>&emsp; + Networking <br>&emsp; + Database <br>&emsp; + ... <br>                                              | 08/12/2025 | 08/12/2025      | <https://cloudjourney.awsstudygroup.com/> |
-| 4   | - Create AWS Free Tier account <br> - Learn about AWS Console & AWS CLI <br> - **Practice:** <br>&emsp; + Create AWS account <br>&emsp; + Install & configure AWS CLI <br> &emsp; + How to use AWS CLI | 08/13/2025 | 08/13/2025      | <https://cloudjourney.awsstudygroup.com/> |
-| 5   | - Learn basic EC2: <br>&emsp; + Instance types <br>&emsp; + AMI <br>&emsp; + EBS <br>&emsp; + ... <br> - SSH connection methods to EC2 <br> - Learn about Elastic IP   <br>                            | 08/14/2025 | 08/15/2025      | <https://cloudjourney.awsstudygroup.com/> |
-| 6   | - **Practice:** <br>&emsp; + Launch an EC2 instance <br>&emsp; + Connect via SSH <br>&emsp; + Attach an EBS volume                                                                                     | 08/15/2025 | 08/15/2025      | <https://cloudjourney.awsstudygroup.com/> |
 
+| Day | Task | Start Date | Completion Date | Reference Material |
+| --- | ---- | ---------- | ---------------- | ------------------ |
+| 2 | - Learn IAM Users & Groups <br> - Understand Access Keys vs Passwords <br> - Review IAM security best practices | 29/09/2025 | 29/09/2025 | AWS IAM Docs |
+| 3 | - Learn IAM Policies (JSON structure): Effect, Action, Resource <br> - Create simple custom policies (read-only access) | 30/09/2025 | 30/09/2025 | AWS IAM Docs |
+| 4 | - Learn IAM Roles & Trust Policies <br> - Understand why Lambda/EC2 use Roles instead of Access Keys | 01/10/2025 | 01/10/2025 | AWS IAM Docs |
+| 5 | - Learn basic AWS Lambda concepts: <br>&emsp; + Handler function <br>&emsp; + Execution environment <br>&emsp; + Memory & timeout <br> - Create a simple “Hello World” Lambda | 02/10/2025 | 02/10/2025 | AWS Lambda Docs |
+| 6 | - Learn API Gateway basics: <br>&emsp; + Endpoint <br>&emsp; + Method (GET, POST) <br>&emsp; + Integration with Lambda <br> - Connect API Gateway → Lambda (simple demo) | 03/10/2025 | 03/10/2025 | AWS API Gateway Docs |
+
+---
 
 ### Week 4 Achievements:
 
-* Understood what AWS is and mastered the basic service groups: 
-  * Compute
-  * Storage
-  * Networking 
-  * Database
-  * ...
+* Understood IAM core components (Users, Groups, Policies, Roles) and how they control access in AWS.
+* Learned how to read and write basic IAM JSON policies for simple permissions.
+* Understood why Roles are used for AWS services instead of storing keys.
+* Created the first AWS Lambda function and tested it through the console.
+* Learned the fundamentals of API Gateway and successfully connected it to Lambda.
+* Built a strong foundation for serverless architecture that will be used in future work.
 
-* Successfully created and configured an AWS Free Tier account.
-
-* Became familiar with the AWS Management Console and learned how to find, access, and use services via the web interface.
-
-* Installed and configured AWS CLI on the computer, including:
-  * Access Key
-  * Secret Key
-  * Default Region
-  * ...
-
-* Used AWS CLI to perform basic operations such as:
-
-  * Check account & configuration information
-  * Retrieve the list of regions
-  * View EC2 service
-  * Create and manage key pairs
-  * Check information about running services
-  * ...
-
-* Acquired the ability to connect between the web interface and CLI to manage AWS resources in parallel.
-* ...
+---

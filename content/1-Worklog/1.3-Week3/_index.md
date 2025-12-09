@@ -1,57 +1,35 @@
 ---
 title: "Week 3 Worklog"
-date: "`r Sys.Date()`"
+date: "2025-12-08"
 weight: 1
 chapter: false
 pre: " <b> 1.3. </b> "
 ---
-{{% notice warning %}} 
-⚠️ **Note:** The following information is for reference purposes only. Please **do not copy verbatim** for your own report, including this warning.
-{{% /notice %}}
 
 
 ### Week 3 Objectives:
 
-* Connect and get acquainted with members of First Cloud Journey.
-* Understand basic AWS services, how to use the console & CLI.
+* Learn key tools used for the FCJ workshop.
+* Install and use Hugo to build a documentation website.
+* Practice writing content in Markdown.
+* Understand introductory AWS services needed for hosting: S3, IAM, CloudFront.
+* Prepare foundation for deploying the documentation website later.
 
 ### Tasks to be carried out this week:
-| Day | Task                                                                                                                                                                                                   | Start Date | Completion Date | Reference Material                        |
-| --- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------- | --------------- | ----------------------------------------- |
-| 2   | - Get acquainted with FCJ members <br> - Read and take note of internship unit rules and regulations                                                                                                   | 08/11/2025 | 08/11/2025      |
-| 3   | - Learn about AWS and its types of services <br>&emsp; + Compute <br>&emsp; + Storage <br>&emsp; + Networking <br>&emsp; + Database <br>&emsp; + ... <br>                                              | 08/12/2025 | 08/12/2025      | <https://cloudjourney.awsstudygroup.com/> |
-| 4   | - Create AWS Free Tier account <br> - Learn about AWS Console & AWS CLI <br> - **Practice:** <br>&emsp; + Create AWS account <br>&emsp; + Install & configure AWS CLI <br> &emsp; + How to use AWS CLI | 08/13/2025 | 08/13/2025      | <https://cloudjourney.awsstudygroup.com/> |
-| 5   | - Learn basic EC2: <br>&emsp; + Instance types <br>&emsp; + AMI <br>&emsp; + EBS <br>&emsp; + ... <br> - SSH connection methods to EC2 <br> - Learn about Elastic IP   <br>                            | 08/14/2025 | 08/15/2025      | <https://cloudjourney.awsstudygroup.com/> |
-| 6   | - **Practice:** <br>&emsp; + Launch an EC2 instance <br>&emsp; + Connect via SSH <br>&emsp; + Attach an EBS volume                                                                                     | 08/15/2025 | 08/15/2025      | <https://cloudjourney.awsstudygroup.com/> |
-
+| Day | Task | Start Date | Completion Date | Reference Material |
+| --- | ---- | ---------- | ---------------- | ------------------ |
+| 2 | - Install Hugo <br> - Learn Hugo folder structure: content/, themes/, layouts/ <br> - Create first Hugo site and run on local | 22/09/2025 | 22/09/2025 |
+| 3 | - Write Week 1 & Week 2 content in Markdown <br> - Add pages to Hugo `content/` directory <br> - Test local rendering | 23/09/2025 | 23/09/2025 |
+| 4 | - Learn S3 basics: creating bucket, uploading objects <br> - Understand static hosting (only the easy part) | 24/09/2025 | 24/09/2025 |
+| 5 | - Learn basic IAM: Users, Policies, least-privilege concept <br> - Create a simple IAM user for S3 access | 25/09/2025 | 25/09/2025 |
+| 6 | - Learn CloudFront basics (what is CDN, why it's used) <br> - Understand how CloudFront can be used later to host Hugo site via S3 | 26/09/2025 | 26/09/2025 | 
 
 ### Week 3 Achievements:
 
-* Understood what AWS is and mastered the basic service groups: 
-  * Compute
-  * Storage
-  * Networking 
-  * Database
-  * ...
-
-* Successfully created and configured an AWS Free Tier account.
-
-* Became familiar with the AWS Management Console and learned how to find, access, and use services via the web interface.
-
-* Installed and configured AWS CLI on the computer, including:
-  * Access Key
-  * Secret Key
-  * Default Region
-  * ...
-
-* Used AWS CLI to perform basic operations such as:
-
-  * Check account & configuration information
-  * Retrieve the list of regions
-  * View EC2 service
-  * Create and manage key pairs
-  * Check information about running services
-  * ...
-
-* Acquired the ability to connect between the web interface and CLI to manage AWS resources in parallel.
-* ...
+* Understood S3 core concepts: bucket, object, key, region, storage classes.
+* Learned how S3 provides high durability and availability for stored data.
+* Configured S3 security controls: Block Public Access and Bucket Policy.
+* Successfully hosted a static website using S3 Static Website Hosting.
+* Deployed a CloudFront distribution using S3 as the origin.
+* Connected CloudFront to S3 using Origin Access Control to improve security and performance.
+* Tested access via both S3 endpoint and CloudFront and observed the difference in behavior and latency.

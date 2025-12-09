@@ -1,127 +1,289 @@
 ---
 title: "Blog 2"
-date: "`r Sys.Date()`"
+date: "2025-12-08"
 weight: 1
 chapter: false
 pre: " <b> 3.2. </b> "
 ---
 
-{{% notice warning %}}
-⚠️ **Lưu ý:** Các thông tin dưới đây chỉ nhằm mục đích tham khảo, vui lòng **không sao chép nguyên văn** cho bài báo cáo của bạn kể cả warning này.
-{{% /notice %}}
+# Theo dõi quy trình ETL với AWS X-Ray và AWS Distro for OpenTelemetry
 
-# Bắt đầu với healthcare data lakes: Sử dụng microservices
+*Tác giả: Praneeth Reddy Tekula, Deepak Kovvuri, và Viveyk Karri*
 
-Các data lake có thể giúp các bệnh viện và cơ sở y tế chuyển dữ liệu thành những thông tin chi tiết về doanh nghiệp và duy trì hoạt động kinh doanh liên tục, đồng thời bảo vệ quyền riêng tư của bệnh nhân. **Data lake** là một kho lưu trữ tập trung, được quản lý và bảo mật để lưu trữ tất cả dữ liệu của bạn, cả ở dạng ban đầu và đã xử lý để phân tích. data lake cho phép bạn chia nhỏ các kho chứa dữ liệu và kết hợp các loại phân tích khác nhau để có được thông tin chi tiết và đưa ra các quyết định kinh doanh tốt hơn.
+*Ngày đăng: 30 tháng 8, 2025*
 
-Bài đăng trên blog này là một phần của loạt bài lớn hơn về việc bắt đầu cài đặt data lake dành cho lĩnh vực y tế. Trong bài đăng blog cuối cùng của tôi trong loạt bài, *“Bắt đầu với data lake dành cho lĩnh vực y tế: Đào sâu vào Amazon Cognito”*, tôi tập trung vào các chi tiết cụ thể của việc sử dụng Amazon Cognito và Attribute Based Access Control (ABAC) để xác thực và ủy quyền người dùng trong giải pháp data lake y tế. Trong blog này, tôi trình bày chi tiết cách giải pháp đã phát triển ở cấp độ cơ bản, bao gồm các quyết định thiết kế mà tôi đã đưa ra và các tính năng bổ sung được sử dụng. Bạn có thể truy cập các code samples cho giải pháp tại Git repo này để tham khảo.
+*Chuyên mục:* [*AWS Distro for OpenTelemetry*](https://aws.amazon.com/blogs/mt/category/management-tools/aws-distro-for-opentelemetry/)*,* [*AWS Glue*](https://aws.amazon.com/blogs/mt/category/analytics/aws-glue/)*,* [*AWS X-Ray*](https://aws.amazon.com/blogs/mt/category/developer-tools/aws-x-ray/)*,* [*Management Tools*](https://aws.amazon.com/blogs/mt/category/management-tools/)*,* [*Technical How-to*](https://aws.amazon.com/blogs/mt/category/post-types/technical-how-to/)
 
----
+## Giới thiệu
 
-## Hướng dẫn kiến trúc
+Các data pipeline là yếu tố thiết yếu đối với các công ty định hướng dữ liệu hiện đại nhằm thu được những insight kinh doanh quan trọng. Tuy nhiên, các pipeline này thường gặp lỗi khi những file hoặc dataset mới từ nguồn dữ liệu không tuân theo schema mong đợi, dẫn đến việc các job ở tầng downstream bị lỗi, workflow bị gián đoạn, và việc tạo ra insight bị trì hoãn. Bên cạnh đó, sự dao động của khối lượng dữ liệu — từ vài gigabyte đến hàng terabyte — có thể ảnh hưởng đáng kể đến hiệu suất và độ tin cậy của các pipeline này. Điều này khiến việc xác định ETL job cụ thể bị lỗi trong toàn bộ pipeline trở nên khó khăn hơn đối với người dùng.
 
-Thay đổi chính kể từ lần trình bày cuối cùng của kiến trúc tổng thể là việc tách dịch vụ đơn lẻ thành một tập hợp các dịch vụ nhỏ để cải thiện khả năng bảo trì và tính linh hoạt. Việc tích hợp một lượng lớn dữ liệu y tế khác nhau thường yêu cầu các trình kết nối chuyên biệt cho từng định dạng; bằng cách giữ chúng được đóng gói riêng biệt với microservices, chúng ta có thể thêm, xóa và sửa đổi từng trình kết nối mà không ảnh hưởng đến những kết nối khác. Các microservices được kết nối rời thông qua tin nhắn publish/subscribe tập trung trong cái mà tôi gọi là “pub/sub hub”.
+Để giải quyết những thách thức này, việc giám sát data pipeline theo thời gian thực và duy trì góc nhìn end-to-end là rất quan trọng nhằm phát hiện sớm sự cố và giảm thiểu gián đoạn. Trong bài viết này, chúng ta sẽ cùng tìm hiểu cách orchestrate một ETL pipeline end-to-end bằng cách sử dụng AWS Glue, AWS Step Functions, Amazon Simple Storage Service (Amazon S3), AWS Distro for OpenTelemetry (ADOT) và AWS X-Ray.
 
-Giải pháp này đại diện cho những gì tôi sẽ coi là một lần lặp nước rút hợp lý khác từ last post của tôi. Phạm vi vẫn được giới hạn trong việc nhập và phân tích cú pháp đơn giản của các **HL7v2 messages** được định dạng theo **Quy tắc mã hóa 7 (ER7)** thông qua giao diện REST.
+## Tổng quan về giải pháp
 
-**Kiến trúc giải pháp bây giờ như sau:**
+Giải pháp này giải quyết một trường hợp sử dụng trong kỹ thuật dữ liệu (data engineering) với cách tiếp cận pipeline hai giai đoạn:
 
-> *Hình 1. Kiến trúc tổng thể; những ô màu thể hiện những dịch vụ riêng biệt.*
+*   Giai đoạn làm sạch dữ liệu (Data Cleaning): Giai đoạn làm sạch dữ liệu được xử lý bởi một ETL job để chuyển đổi các định dạng dữ liệu tùy ý (CSV, JSON) sang Parquet và thực hiện nhiều phép biến đổi (transformations) khác nhau, bao gồm chuẩn hóa tên cột (standardizing column names), loại bỏ các cột không cần thiết (dropping unnecessary columns), xóa các bản ghi trùng lặp (removing duplicates), điền các giá trị null (filling null values), chuyển đổi các kiểu dữ liệu (converting data types), và khắc phục độ lệch (fixing skewness) trong một số cột nhất định.
+*   Giai đoạn xử lý dữ liệu (Data Processing): Tiếp theo, giai đoạn xử lý dữ liệu được xử lý bởi một ETL job khác, có nhiệm vụ tính toán, xếp hạng và nhóm dữ liệu.
 
----
+Data pipeline được điều phối từ đầu đến cuối (end to end) bằng AWS Step Functions, tận dụng AWS Glue cho các ETL job được tích hợp ADOT và X-ray helper model tùy chỉnh để có khả năng truy vết toàn diện (comprehensive tracing). Hình (1) minh họa các thành phần kiến trúc liên quan đến việc điều phối một ETL pipeline end-to-end. Cách thức hoạt động như sau:
 
-Mặc dù thuật ngữ *microservices* có một số sự mơ hồ cố hữu, một số đặc điểm là chung:  
-- Chúng nhỏ, tự chủ, kết hợp rời rạc  
-- Có thể tái sử dụng, giao tiếp thông qua giao diện được xác định rõ  
-- Chuyên biệt để giải quyết một việc  
-- Thường được triển khai trong **event-driven architecture**
+1.  Tải một dataset lên S3 bucket bằng cách tạo một thư mục input.
+2.  Thao tác này kích hoạt lambda function, khởi tạo một X-Ray trace mới và gọi Step Function workflow bằng cách truyền traceID và chi tiết đối tượng S3 làm đầu vào (input).
+3.  Step Function workflow truyền traceID này dưới dạng một tham số. Glue Jobs sử dụng X-ray helper module để truy xuất parent segment cho job hiện tại và tương quan với input traceID từ step functions.
+4.  Glue Job – 1 tìm nạp input data set từ S3 bucket để thực hiện data cleaning và tải đầu ra (output) lên cùng một bucket bằng cách tạo một thư mục clean.
+5.  Sau khi Glue Job – 1 hoàn thành, step function workflow kích hoạt Glue Job – 2.
+6.  Glue Job – 2 tìm nạp input data set từ S3 bucket để thực hiện data processing job và tải đầu ra (output) lên cùng một bucket bằng cách tạo một thư mục processed.
+7.  Mỗi Glue Job được tích hợp ADOT để gửi dữ liệu trace đã thu thập đến OpenTelemetry Collector, chạy dưới dạng một sidecar trên ECS.
+8.  OpenTelemetry Collector sau đó đẩy dữ liệu trace đã thu thập đến AWS X-Ray.
 
-Khi xác định vị trí tạo ranh giới giữa các microservices, cần cân nhắc:  
-- **Nội tại**: công nghệ được sử dụng, hiệu suất, độ tin cậy, khả năng mở rộng  
-- **Bên ngoài**: chức năng phụ thuộc, tần suất thay đổi, khả năng tái sử dụng  
-- **Con người**: quyền sở hữu nhóm, quản lý *cognitive load*
+<img src="/images/Blog2/Image-1.jpg" alt=" Solution Architecture" >
+*Hình 1: Solution Architecture*
 
----
+Nhờ cách này, chúng ta duy trì một trace duy nhất xuyên suốt pipeline ETL, giúp mọi người có thể nhìn thấy luồng dữ liệu end-to-end. Các kỹ sư dữ liệu và người làm MLOps có thể có insight sâu, nhanh chóng xác định điểm tắc nghẽn hoặc lỗi, và tối ưu hóa workflow để tăng hiệu quả và độ tin cậy.
 
-## Lựa chọn công nghệ và phạm vi giao tiếp
+## Yêu cầu trước khi thực hiện
 
-| Phạm vi giao tiếp                        | Các công nghệ / mô hình cần xem xét                                                        |
-| ---------------------------------------- | ------------------------------------------------------------------------------------------ |
-| Trong một microservice                   | Amazon Simple Queue Service (Amazon SQS), AWS Step Functions                               |
-| Giữa các microservices trong một dịch vụ | AWS CloudFormation cross-stack references, Amazon Simple Notification Service (Amazon SNS) |
-| Giữa các dịch vụ                         | Amazon EventBridge, AWS Cloud Map, Amazon API Gateway                                      |
+Để triển khai giải pháp này, bạn cần:
 
----
+*   Một tài khoản AWS. Nếu bạn chưa có, bạn có thể tạo một tài khoản.
+*   Một [AWS Identity and Access Management (IAM)](http://aws.amazon.com/iam) role để khởi tạo template [CloudFormation](http://aws.amazon.com/cloudformation), tạo các role IAM cần thiết để truy cập các dịch vụ như [AWS Glue](https://aws.amazon.com/glue), [AWS X-Ray](https://aws.amazon.com/xray/), [AWS Step Functions](https://aws.amazon.com/step-functions/), [AWS Lambda](https://aws.amazon.com/pm/lambda/), [Amazon ECS](https://aws.amazon.com/ecs/), [AWS CloudMap](https://aws.amazon.com/cloud-map/), [Amazon S3](http://aws.amazon.com/s3).
+*   Cài đặt [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html).
+*   Python 3.12 hoặc mới hơn.
+*   Cài đặt [AWS CDK](https://docs.aws.amazon.com/cdk/v2/guide/getting_started.html#getting_started_install).
 
-## The pub/sub hub
+## Triển khai giải pháp với AWS CDK
 
-Việc sử dụng kiến trúc **hub-and-spoke** (hay message broker) hoạt động tốt với một số lượng nhỏ các microservices liên quan chặt chẽ.  
-- Mỗi microservice chỉ phụ thuộc vào *hub*  
-- Kết nối giữa các microservice chỉ giới hạn ở nội dung của message được xuất  
-- Giảm số lượng synchronous calls vì pub/sub là *push* không đồng bộ một chiều
+Chúng ta sẽ dùng [AWS CDK](https://aws.amazon.com/cdk/) để triển khai giải pháp này. CDK cho phép định nghĩa cơ sở hạ tầng qua một ngôn ngữ lập trình quen thuộc như Python.
 
-Nhược điểm: cần **phối hợp và giám sát** để tránh microservice xử lý nhầm message.
+1. Clone repository:
 
----
+```
+git clone <https://github.com/aws-samples/tracing-etl-workloads-otel.git> cd tracing-etl-workloads-otel
+``` 
 
-## Core microservice
+2. Tạo và kích hoạt môi trường ảo (virtual environment):
+  * Đối với Linux và macOS:
 
-Cung cấp dữ liệu nền tảng và lớp truyền thông, gồm:  
-- **Amazon S3** bucket cho dữ liệu  
-- **Amazon DynamoDB** cho danh mục dữ liệu  
-- **AWS Lambda** để ghi message vào data lake và danh mục  
-- **Amazon SNS** topic làm *hub*  
-- **Amazon S3** bucket cho artifacts như mã Lambda
+```
+python3 -m venv .venv
+source .venv/bin/activate
+``` 
 
-> Chỉ cho phép truy cập ghi gián tiếp vào data lake qua hàm Lambda → đảm bảo nhất quán.
+  * Đối với Windows:
 
----
+```
+python -m venv .venv
+.venv\\Scripts\\activate
+``` 
 
-## Front door microservice
+  * Cài đặt các dependencies.
 
-- Cung cấp API Gateway để tương tác REST bên ngoài  
-- Xác thực & ủy quyền dựa trên **OIDC** thông qua **Amazon Cognito**  
-- Cơ chế *deduplication* tự quản lý bằng DynamoDB thay vì SNS FIFO vì:
-  1. SNS deduplication TTL chỉ 5 phút
-  2. SNS FIFO yêu cầu SQS FIFO
-  3. Chủ động báo cho sender biết message là bản sao
+```
+pip install -r requirements.txt
+``` 
 
----
+  * Bootstrap môi trường CDK (nếu chưa thực hiện).
 
-## Staging ER7 microservice
+```
+cdk bootstrap
+``` 
 
-- Lambda “trigger” đăng ký với pub/sub hub, lọc message theo attribute  
-- Step Functions Express Workflow để chuyển ER7 → JSON  
-- Hai Lambda:
-  1. Sửa format ER7 (newline, carriage return)
-  2. Parsing logic  
-- Kết quả hoặc lỗi được đẩy lại vào pub/sub hub
+  * Triển khai (Deploy) stack.
 
----
+```
+cdk deploy
+```` 
 
-## Tính năng mới trong giải pháp
+Điều này sẽ tạo các tài nguyên cần thiết, bao gồm: S3 buckets, Glue jobs, Step Functions state machine, and Lambda function. Sau khi triển khai xong, bạn có thể xem các tài nguyên trong console CloudFormation, trong stack “OtelSolutionStack”.
 
-### 1. AWS CloudFormation cross-stack references
-Ví dụ *outputs* trong core microservice:
-```yaml
-Outputs:
-  Bucket:
-    Value: !Ref Bucket
-    Export:
-      Name: !Sub ${AWS::StackName}-Bucket
-  ArtifactBucket:
-    Value: !Ref ArtifactBucket
-    Export:
-      Name: !Sub ${AWS::StackName}-ArtifactBucket
-  Topic:
-    Value: !Ref Topic
-    Export:
-      Name: !Sub ${AWS::StackName}-Topic
-  Catalog:
-    Value: !Ref Catalog
-    Export:
-      Name: !Sub ${AWS::StackName}-Catalog
-  CatalogArn:
-    Value: !GetAtt Catalog.Arn
-    Export:
-      Name: !Sub ${AWS::StackName}-CatalogArn
+## Hướng dẫn chi tiết về giải pháp
+
+1.  Tải [dataset mẫu Airbnb](https://www.kaggle.com/datasets/arianazmoudeh/airbnbopendata) lên S3 ingestion bucket, trong thư mục con (prefix folder).
+
+*Hình 2: Dataset mẫu đã được tải lên S3 bucket.*
+
+2.  Chờ AWS Step Functions hoàn tất workflow của state machine và trạng thái hiển thị “Succeeded”.
+
+*Hình 3: Workflow của State Machine đang chạy các Glue Jobs*
+
+3.  Điều hướng đến [AWS CloudWatch Console](https://us-east-2.console.aws.amazon.com/cloudwatch/home?region=us-east-2#home:). Trong thanh điều hướng bên trái, chọn “X-Ray traces”, sau đó chọn traceID gần nhất.
+
+*Hình 4: Truy xuất Trace trên AWS X-Ray*
+
+4.  Một bản đồ trace (trace map) sẽ được hiển thị mặc định. Đây là biểu diễn trực quan, end-to-end của luồng dữ liệu đi qua từng thành phần trong data pipeline.
+
+*Hình 5: Trace Map – biểu diễn end-to-end của luồng dữ liệu (data flow)*
+
+5.  Mỗi thành phần, bao gồm AWS Lambda, AWS Step Functions, và AWS Glue, sẽ tạo một segment riêng biệt trong trace.
+
+*Hình 6: Các Segment trong một Trace*
+
+6.  Bạn sẽ thấy các sub-segment nằm trong AWS Glue Segment, do quá trình instrumentation được thực hiện bằng AWS Distro for OpenTelemetry (ADOT).
+
+*Hình 7: Các Sub-segment trong AWS Glue Segment*
+
+7.  Mức độ chi tiết này giúp data engineers xác định được thao tác cụ thể nào trong Glue job đang tiêu tốn nhiều thời gian nhất.
+
+## Giải thích chi tiết về việc tương quan trace (Trace Correlation)
+
+Giải pháp sử dụng mô-đun hỗ trợ X-Ray tùy chỉnh để tương quan các trace giữa các phần trong pipeline ETL. Cách hoạt động như sau:
+
+*   **Glue Jobs:**
+    *   Khi bắt đầu mỗi job Glue, mô-đun X-Ray helper dùng để lấy segment cha cho job hiện tại:
+
+```python
+xray_trace = xray_helper.XRayTrace(TRACE_ID)
+parent_id = xray_trace.retrieve_segment_for_step(JOB_NAME)
+
+````
+
+``` 
+*   Nếu tìm được segment cha, ta tạo một context mới cho ADOT sử dụng propagator của X-Ray:
+
+```
+
+``` python
+carrier = {'X-Amzn-Trace-Id': f"Root={xray_trace.trace_id};Parent={parent_id};Sampled=1"}
+propagator = AwsXRayPropagator() context = propagator.extract(carrier=carrier)
+
+```
+
+``` 
+*   Việc thực thi job Glue được wrap trong một span với context này:
+
+```
+
+``` python
+with tracer.start_as_current_span("Glue Job Execution", context=context, kind=trace.SpanKind.SERVER):
+# Job execution code
+
+```
+
+``` 
+*   Trong job, các thao tác riêng biệt được wrap bằng các span con để trace chi tiết hơn:
+
+```
+
+``` python
+with tracer.start_as_current_span("Read Data", attributes={'S3Path': s3_path}):
+# Read data operation
+
+```
+
+  * **Trace Emission:**
+      * Instrumentation ADOT được cấu hình để gửi dữ liệu trace đến OpenTelemetry Collector chạy như sidecar. Collector sau đó gửi dữ liệu trace đến AWS X-Ray:
+
+<!-- end list -->
+
+``` python
+processor = BatchSpanProcessor(OTLPSpanExporter(endpoint=f"http://{OTLP_ENDPOINT}:4318/v1/traces"))
+tracer_provider = TracerProvider(resource=resource, active_span_processor=processor)
+
+```
+
+``` 
+*   Nhờ cách này, chúng ta giữ một trace duy nhất xuyên suốt pipeline ETL, từ khi dữ liệu được upload lên S3, qua Step Functions đến các job Glue.
+
+```
+
+## Khái niệm về Distributed Tracing
+
+Một số khái niệm quan trọng cần hiểu:
+
+  * **Trace:** Một trace đại diện cho toàn bộ hành trình của một yêu cầu (request) hoặc một hoạt động (operation) khi nó di chuyển qua một hệ thống phân tán. Trong pipeline ETL của chúng ta, một trace bắt đầu khi dữ liệu được tải lên Amazon S3 và kết thúc khi dữ liệu đã được xử lý cuối cùng được ghi trở lại vào Amazon S3.
+  * **Span:** Thành phần cấu tạo của trace. Mỗi span đại diện cho một đơn vị công việc hay hoạt động trong trace. Ví dụ: trong job Glue, ta tạo span cho các thao tác như “Read Data”, “Drop Columns”, “Calculate Minimum Total Spend”. Span có thời điểm bắt đầu, thời điểm kết thúc và có thể chứa metadata (như logs hoặc tags). Ví dụ từ Glue Job của chúng tôi:
+
+<!-- end list -->
+
+``` python
+with tracer.start_as_current_span("Calculate Minimum Total Spend"):
+spark_df = spark_df.withColumn("minimum_total_spend", (col("price") + col("service_fee")) * col('minimum_nights'))
+
+```
+
+  * **Quan hệ Cha – Con (Parent-Child):** Spans có thể có quan hệ cha – con, tạo nên cấu trúc phân cấp trong một trace. Ở giải pháp này, span thực thi Glue job là span cha, và các thao tác bên trong là span con.
+  * **Segment:** Trong AWS X-Ray, một segment tương đương một span, nhưng nó đại diện cho một đơn vị công việc được thực hiện bởi một thành phần duy nhất trong ứng dụng. (ví dụ: Lambda invocation, Step Functions execution, Glue job run).
+  * **Subsegment:** Tương đương với span con, đại diện tầng con trong một segment. Trong các Glue jobs của chúng ta, những hoạt động riêng lẻ được theo dõi (trace) sẽ trở thành subsegments trong X-Ray.
+  * **Trace Context Propagation:** Để duy trì một trace xuyên suốt giữa các thành phần của hệ thống phân tán, cần truyền ngữ cảnh trace (trace context). Điều này cho phép chúng ta liên kết Lambda, Step Functions và các Glue jobs vào cùng một trace. Chúng ta thực hiện điều này bằng cách truyền trace ID và parent segment ID giữa các thành phần. Ví dụ:
+
+<!-- end list -->
+
+``` python
+carrier = {'X-Amzn-Trace-Id': f"Root={xray_trace.trace_id};Parent={parent_id};Sampled=1"}
+propagator = AwsXRayPropagator()
+context = propagator.extract(carrier=carrier)
+
+```
+
+  * **Attributes và Annotations:** Là các cặp key‐value cung cấp thêm ngữ cảnh cho span hoặc segment. Ta sử dụng chúng để thêm thông tin như S3 path, tên job, thống kê dữ liệu. Ví dụ:
+
+<!-- end list -->
+
+``` python
+with tracer.start_as_current_span("Glue Job Execution", context=context, kind=trace.SpanKind.SERVER, attributes={'job_name': JOB_NAME, 'job_run_id': JOB_RUN_ID})
+
+```
+
+  * **Sampling:** Trong hệ thống có lưu lượng cao, việc trace mọi yêu cầu là không khả thi. Sampling là phương pháp chỉ trace một phần yêu cầu. AWS X-Ray cung cấp các quy tắc sampling cấu hình được để kiểm soát lượng dữ liệu trace thu thập và lưu trữ.
+
+## Cấu hình OpenTelemetry Collector
+
+Một thành phần quan trọng trong setup tracing là OpenTelemetry Collector, chạy như sidecar kèm theo các job Glue. Collector chịu trách nhiệm nhận dữ liệu trace từ các job đã instrumentation và chuyển tiếp đến AWS X-Ray.
+
+Hãy phân tích file cấu hình (otel-agent-config.yaml) để xác định mô hình cấu trúc dịch vụ trong collector:
+
+  * **Receivers:** Collector được cấu hình để nhận dữ liệu OpenTelemetry Protocol (OTLP) qua gRPC (cổng 4317) và HTTP (cổng 4318). Điều này cho phép job Glue gửi dữ liệu trace theo cả hai giao thức.
+  * **Exporters:** `awsxray` exporter được cấu hình để gửi dữ liệu trace đã thu thập đến AWS X-Ray. Đây là cách dữ liệu trace của chúng tôi kết thúc bằng việc đưa vào X-Ray để trực quan hóa và phân tích.
+  * **Processors:** Sử dụng bộ giới hạn bộ nhớ (`memory_limiter processor`) để ngăn collector tiêu tốn quá nhiều bộ nhớ. Giới hạn đặt 100 MiB và kiểm tra mỗi 5 giây.
+
+Dưới đây là mô hình cấu trúc dịch vụ trong collector:
+
+``` yaml
+receivers:
+  otlp:
+    protocols:
+      grpc:
+        endpoint: 0.0.0.0:4317
+      http:
+        endpoint: 0.0.0.0:4318
+exporters:
+  awsxray:
+    region: us-east-2
+processors:
+  memory_limiter:
+    limit_mib: 100
+    check_interval: 5s
+service:
+  pipelines:
+    traces:
+      processors:
+        - memory_limiter
+      receivers:
+        - otlp
+      exporters:
+        - awsxray
+
+```
+
+Cấu hình này đảm bảo việc thu thập, xử lý và xuất dữ liệu trace đến AWS X-Ray để quan sát và phân tích pipeline xử lý dữ liệu.
+
+## Dọn dẹp tài nguyên
+
+Bạn có thể xóa stack bằng console [CloudFormation](https://us-east-2.console.aws.amazon.com/cloudformation/home?region=us-east-2#/stacks?filteringText=&filteringStatus=active&viewNested=true) hoặc dùng lệnh sau từ thư mục gốc:
+
+``` 
+cdk destroy
+
+```
+
+Khi xóa stack, hầu hết các tài nguyên sẽ bị xóa cùng với stack, nhưng có một số ngoại lệ. Trong giải pháp này, các hàm Lambda sẽ tạo ra các log của [Amazon CloudWatch](https://aws.amazon.com/cloudwatch) — những log này vẫn được giữ lại ngay cả sau khi stack bị xóa. Các log này sẽ không được CloudFormation theo dõi vì chúng không phải là một phần của stack, do đó chúng sẽ tiếp tục tồn tại. Hãy làm theo các bước được hướng dẫn [tại đây](https://docs.aws.amazon.com/solutions/latest/video-on-demand-on-aws-foundation/deleting-the-cloudwatch-logs.html) để xóa thủ công bất kỳ log nào bạn không muốn giữ lại từ giao diện CloudWatch console.
+
+## Kết luận
+
+Giải pháp này cung cấp cái nhìn quan sát (observability) end-to-end cho workflow pipeline dữ liệu bằng cách truyền ngữ cảnh và trace các hoạt động cá nhân qua AWS Distro for OpenTelemetry và AWS X-Ray. Điều này giúp kỹ sư dữ liệu nhanh chóng xử lý lỗi, tối ưu hiệu suất và có insight về cách tính chất dữ liệu ảnh hưởng đến quá trình xử lý sau đó. Quan sát này rất quan trọng đối với các nền tảng dữ liệu hiện đại bao gồm workflow phân tán phức tạp qua nhiều thành phần và dịch vụ.
+
+``` 
+ 
+```

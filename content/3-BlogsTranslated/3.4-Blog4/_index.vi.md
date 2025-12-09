@@ -1,14 +1,10 @@
 ---
 title: "Blog 4"
-date: "`r Sys.Date()`"
+date: "2025-12-08"
 weight: 1
 chapter: false
 pre: " <b> 3.4. </b> "
 ---
-
-{{% notice warning %}}
-⚠️ **Lưu ý:** Các thông tin dưới đây chỉ nhằm mục đích tham khảo, vui lòng **không sao chép nguyên văn** cho bài báo cáo của bạn kể cả warning này.
-{{% /notice %}}
 
 # Bắt đầu với healthcare data lakes: Sử dụng microservices
 

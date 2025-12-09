@@ -1,28 +1,31 @@
 ---
 title: "Worklog Tuần 7"
-date: "`r Sys.Date()`"
+date: "2025-12-08"
 weight: 1
 chapter: false
 pre: " <b> 1.7. </b> "
 ---
-{{% notice warning %}}
-⚠️ **Lưu ý:** Các thông tin dưới đây chỉ nhằm mục đích tham khảo, vui lòng **không sao chép nguyên văn** cho bài báo cáo của bạn kể cả warning này.
-{{% /notice %}}
+
 
 
 ### Mục tiêu tuần 7:
 
-* Kết nối, làm quen với các thành viên trong First Cloud Journey.
-* Hiểu dịch vụ AWS cơ bản, cách dùng console & CLI.
+* Học sâu hơn về S3: bucket, object, permission.
+* Hiểu cơ chế S3 static website hosting.
+* Học CloudFront cơ bản để phân phối nội dung toàn cầu.
+* Thực hành host website HTML đơn giản trên S3.
+* Kết nối S3 → CloudFront để tối ưu tốc độ và bảo mật.
 
 ### Các công việc cần triển khai trong tuần này:
-| Thứ | Công việc                                                                                                                                                                                   | Ngày bắt đầu | Ngày hoàn thành | Nguồn tài liệu                            |
-| --- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------ | --------------- | ----------------------------------------- |
-| 2   | - Làm quen với các thành viên FCJ <br> - Đọc và lưu ý các nội quy, quy định tại đơn vị thực tập                                                                                             | 11/08/2025   | 11/08/2025      |
-| 3   | - Tìm hiểu AWS và các loại dịch vụ <br>&emsp; + Compute <br>&emsp; + Storage <br>&emsp; + Networking <br>&emsp; + Database <br>&emsp; + ... <br>                                            | 12/08/2025   | 12/08/2025      | <https://cloudjourney.awsstudygroup.com/> |
-| 4   | - Tạo AWS Free Tier account <br> - Tìm hiểu AWS Console & AWS CLI <br> - **Thực hành:** <br>&emsp; + Tạo AWS account <br>&emsp; + Cài AWS CLI & cấu hình <br> &emsp; + Cách sử dụng AWS CLI | 13/08/2025   | 13/08/2025      | <https://cloudjourney.awsstudygroup.com/> |
-| 5   | - Tìm hiểu EC2 cơ bản: <br>&emsp; + Instance types <br>&emsp; + AMI <br>&emsp; + EBS <br>&emsp; + ... <br> - Các cách remote SSH vào EC2 <br> - Tìm hiểu Elastic IP   <br>                  | 14/08/2025   | 15/08/2025      | <https://cloudjourney.awsstudygroup.com/> |
-| 6   | - **Thực hành:** <br>&emsp; + Tạo EC2 instance <br>&emsp; + Kết nối SSH <br>&emsp; + Gắn EBS volume                                                                                         | 15/08/2025   | 15/08/2025      | <https://cloudjourney.awsstudygroup.com/> |
+
+| Thứ | Công việc | Ngày bắt đầu | Ngày hoàn thành | Tài liệu tham khảo |
+| --- | --------- | ------------ | ---------------- | ------------------- |
+| 2 | - Tìm hiểu khái niệm S3: bucket, object key, region <br> - Học permissions: Block Public Access, Bucket Policy (mức cơ bản) | 20/10/2025 | 20/10/2025 | AWS S3 Docs |
+| 3 | - Bật S3 static website hosting <br> - Upload file index.html, error.html <br> - Test website qua endpoint S3 | 21/10/2025 | 21/10/2025 | AWS S3 Docs |
+| 4 | - Tìm hiểu CloudFront: distribution, origin, cache (TTL) <br> - Hiểu vai trò CDN giúp giảm latency | 22/10/2025 | 22/10/2025 | AWS CloudFront Docs |
+| 5 | - Tạo CloudFront distribution dùng S3 làm origin <br> - Cấu hình behavior mặc định (GET, HEAD) <br> - Test domain CloudFront | 23/10/2025 | 23/10/2025 | AWS CloudFront Docs |
+| 6 | - So sánh tốc độ giữa endpoint S3 và CloudFront <br> - Thực hiện cache invalidation đơn giản <br> - Kiểm tra tốc độ tải trang | 24/10/2025 | 24/10/2025 | AWS Docs |
+
 
 
 ### Kết quả đạt được tuần 7:

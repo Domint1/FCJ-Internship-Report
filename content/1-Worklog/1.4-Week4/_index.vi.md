@@ -1,59 +1,36 @@
 ---
 title: "Worklog Tuần 4"
-date: "`r Sys.Date()`"
+date: "2025-12-08"
 weight: 1
 chapter: false
 pre: " <b> 1.4. </b> "
 ---
-{{% notice warning %}}
-⚠️ **Lưu ý:** Các thông tin dưới đây chỉ nhằm mục đích tham khảo, vui lòng **không sao chép nguyên văn** cho bài báo cáo của bạn kể cả warning này.
-{{% /notice %}}
+
 
 
 ### Mục tiêu tuần 4:
 
-* Kết nối, làm quen với các thành viên trong First Cloud Journey.
-* Hiểu dịch vụ AWS cơ bản, cách dùng console & CLI.
+* Học sâu hơn về IAM: Users, Groups, Policies, Roles.
+* Hiểu IAM kiểm soát truy cập vào AWS như thế nào.
+* Học Lambda cơ bản: chức năng, cách hoạt động, khi nào nên dùng.
+* Tìm hiểu giới thiệu về API Gateway.
+* Xây nền tảng để kết nối các dịch vụ trong các tuần tới.
 
 ### Các công việc cần triển khai trong tuần này:
-| Thứ | Công việc                                                                                                                                                                                   | Ngày bắt đầu | Ngày hoàn thành | Nguồn tài liệu                            |
-| --- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------ | --------------- | ----------------------------------------- |
-| 2   | - Làm quen với các thành viên FCJ <br> - Đọc và lưu ý các nội quy, quy định tại đơn vị thực tập                                                                                             | 11/08/2025   | 11/08/2025      |
-| 3   | - Tìm hiểu AWS và các loại dịch vụ <br>&emsp; + Compute <br>&emsp; + Storage <br>&emsp; + Networking <br>&emsp; + Database <br>&emsp; + ... <br>                                            | 12/08/2025   | 12/08/2025      | <https://cloudjourney.awsstudygroup.com/> |
-| 4   | - Tạo AWS Free Tier account <br> - Tìm hiểu AWS Console & AWS CLI <br> - **Thực hành:** <br>&emsp; + Tạo AWS account <br>&emsp; + Cài AWS CLI & cấu hình <br> &emsp; + Cách sử dụng AWS CLI | 13/08/2025   | 13/08/2025      | <https://cloudjourney.awsstudygroup.com/> |
-| 5   | - Tìm hiểu EC2 cơ bản: <br>&emsp; + Instance types <br>&emsp; + AMI <br>&emsp; + EBS <br>&emsp; + ... <br> - Các cách remote SSH vào EC2 <br> - Tìm hiểu Elastic IP   <br>                  | 14/08/2025   | 15/08/2025      | <https://cloudjourney.awsstudygroup.com/> |
-| 6   | - **Thực hành:** <br>&emsp; + Tạo EC2 instance <br>&emsp; + Kết nối SSH <br>&emsp; + Gắn EBS volume                                                                                         | 15/08/2025   | 15/08/2025      | <https://cloudjourney.awsstudygroup.com/> |
+| Thứ | Công việc | Ngày bắt đầu | Ngày hoàn thành | Tài liệu tham khảo |
+| --- | --------- | ------------ | ---------------- | ------------------- |
+| 2 | - Học IAM Users & Groups <br> - Phân biệt Access Key và Password <br> - Tìm hiểu best practice bảo mật IAM | 29/09/2025 | 29/09/2025 | AWS IAM Docs |
+| 3 | - Học cấu trúc IAM Policy (JSON): Effect, Action, Resource <br> - Tạo 1 policy đơn giản (chỉ read-only) | 30/09/2025 | 30/09/2025 | AWS IAM Docs |
+| 4 | - Tìm hiểu IAM Role & Trust Policy <br> - Hiểu vì sao Lambda/EC2 dùng Role thay vì Access Key | 01/10/2025 | 01/10/2025 | AWS IAM Docs |
+| 5 | - Học Lambda cơ bản: <br>&emsp; + Handler <br>&emsp; + Môi trường thực thi <br>&emsp; + Memory & Timeout <br> - Tạo Lambda “Hello World” | 02/10/2025 | 02/10/2025 | AWS Lambda Docs |
+| 6 | - Tìm hiểu API Gateway cơ bản: <br>&emsp; + Endpoint <br>&emsp; + Method (GET/POST) <br>&emsp; + Tích hợp Lambda đơn giản | 03/10/2025 | 03/10/2025 | AWS API Gateway Docs |
 
 
 ### Kết quả đạt được tuần 4:
 
-* Hiểu AWS là gì và nắm được các nhóm dịch vụ cơ bản: 
-  * Compute
-  * Storage
-  * Networking 
-  * Database
-  * ...
-
-* Đã tạo và cấu hình AWS Free Tier account thành công.
-
-* Làm quen với AWS Management Console và biết cách tìm, truy cập, sử dụng dịch vụ từ giao diện web.
-
-* Cài đặt và cấu hình AWS CLI trên máy tính bao gồm:
-  * Access Key
-  * Secret Key
-  * Region mặc định
-  * ...
-
-* Sử dụng AWS CLI để thực hiện các thao tác cơ bản như:
-
-  * Kiểm tra thông tin tài khoản & cấu hình
-  * Lấy danh sách region
-  * Xem dịch vụ EC2
-  * Tạo và quản lý key pair
-  * Kiểm tra thông tin dịch vụ đang chạy
-  * ...
-
-* Có khả năng kết nối giữa giao diện web và CLI để quản lý tài nguyên AWS song song.
-* ...
-
-
+* Hiểu rõ các thành phần của IAM (User, Group, Policy, Role).
+* Biết cách đọc và viết policy IAM ở mức cơ bản.
+* Biết lý do IAM Role quan trọng đối với Lambda và EC2.
+* Tạo được hàm Lambda đơn giản và test thành công.
+* Hiểu nền tảng của API Gateway và cách tích hợp với Lambda.
+* Xây dựng kiến thức serverless cơ bản cho những tuần tiếp theo.
