@@ -1497,8 +1497,9 @@ option {
   color: initial;
 }
 
-.img-box img { 
-  width: auto; 
-  height: 100%; 
+.img-box img {
+  height: 100%;
+  width: auto;
   max-height: 500px;
 }
+
