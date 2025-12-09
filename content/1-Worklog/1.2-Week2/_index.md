@@ -14,6 +14,8 @@ pre: " <b> 1.2. </b> "
 * Spend 1–2 days on early brainstorming and project direction.
 * Draft simple architecture ideas for the final workshop project.
 
+---
+
 ### Tasks to be carried out this week:
 | Day | Task                                                                                                                                                                                                   | Start Date | Completion Date | Reference Material                        |
 | --- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------- | --------------- | ----------------------------------------- |
