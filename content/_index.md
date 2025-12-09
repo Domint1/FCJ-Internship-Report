@@ -29,8 +29,7 @@ chapter: false
 
 &emsp; **Internship Duration:** From 12/08/2025 to 12/11/2025
 
-<img src="/images/avatar.png" alt="Your profile picture" style="width: 450px; height: 600px; object-fit: cover;">
-
+![Your profile picture](/images/avatar.png)
 ### Report Content
 
 1.  [Worklog](1-Worklog/)
