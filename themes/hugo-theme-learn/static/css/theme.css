@@ -1496,10 +1496,3 @@ pre .copy-to-clipboard:hover {
 option {
   color: initial;
 }
-
-.img-box img {
-  height: 100%;
-  width: auto;
-  max-height: 500px;
-}
-
