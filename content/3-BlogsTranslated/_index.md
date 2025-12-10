@@ -6,7 +6,7 @@ chapter: false
 pre: " <b> 3. </b> "
 ---
 
-This section will list and introduce the blogs you have translated. For example:
+List blogs translated:
 
 ###  [Blog 1 - Training AI models for skill-based matchmaking using Amazon SageMaker AI](3.1-Blog1/)
 This blog introduces how to build a machine learning workflow to generate more accurate, data-driven skill ratings for multiplayer matchmaking using Amazon SageMaker AI. You will learn why traditional skill formulas struggle with large, diverse gameplay metrics, and how supervised learning can automatically identify which factors best represent true player skill. The article walks you through setting up a SageMaker AI domain, preparing a regression-based pipeline with Autopilot, deploying the ML workflow, and integrating it with game backend components such as API Gateway, Lambda, DynamoDB, and GameLift FlexMatch. By following the steps, developers can automate data preprocessing, model training, evaluation, and deployment, ultimately enabling more balanced, fair, and engaging matchmaking experiences.
