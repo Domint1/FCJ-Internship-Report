@@ -29,7 +29,7 @@ chapter: false
 
 &emsp; **Internship Duration:** From 12/08/2025 to 12/11/2025
 
-<img src="/images/avatar.png" style="width:300px; height:400px;" alt="Solution Architecture">
+<img src="/images/avatar.png" alt="Your Avatar" style="width: 450px; height: 600px; object-fit: cover;">
 
 ### Report Content
 
